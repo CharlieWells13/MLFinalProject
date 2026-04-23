@@ -18,7 +18,8 @@ PROJECT_ROOT = DEEP_LEARNING_DIR.parent
 if str(DEEP_LEARNING_DIR) not in sys.path:
     sys.path.append(str(DEEP_LEARNING_DIR))
 
-from models.model import build_model  # noqa: E402
+from models.model_scratch import build_model as build_model_scratch  # noqa: E402
+from models.model_pretrained import build_model as build_model_pretrained  # noqa: E402
 try:
     # Works when invoked as a package path from repo root.
     from train.data_pipeline import create_dataloaders  # type: ignore  # noqa: E402
@@ -246,6 +247,7 @@ def main() -> None:
     weight_decay = float(cfg.get("weight_decay", 1e-4))
     image_size = int(cfg.get("image_size", 224))
     freeze_backbone = bool(cfg.get("freeze_backbone", False))
+    use_pretrained_backbone = bool(cfg.get("use_pretrained_backbone", False))
     num_workers = resolve_num_workers(int(cfg.get("num_workers", 2)))
     early_stopping_patience = int(cfg.get("early_stopping_patience", 5))
     train_split = resolve_project_path(
@@ -289,7 +291,10 @@ def main() -> None:
     )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = build_model(pretrained=False, freeze_backbone=freeze_backbone, apply_sigmoid=True).to(device)
+    if use_pretrained_backbone:
+        model = build_model_pretrained(pretrained=True, freeze_backbone=freeze_backbone, apply_sigmoid=True).to(device)
+    else:
+        model = build_model_scratch(pretrained=False, freeze_backbone=freeze_backbone, apply_sigmoid=True).to(device)
     criterion = build_loss(loss_name, loss_params)
     optimizer = build_optimizer(
         optimizer_name,
@@ -321,6 +326,7 @@ def main() -> None:
         "checkpoint_run_name": checkpoint_run_name,
         "run_dir": str(run_dir),
         "device": str(device),
+        "use_pretrained_backbone": use_pretrained_backbone,
         "resolved_num_workers": num_workers,
     }
     save_yaml(config_used, run_dir / "config_used.yaml")

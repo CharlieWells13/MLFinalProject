@@ -18,6 +18,7 @@ loss:
     iou_weight: 1.0
 image_size: 224
 freeze_backbone: false
+use_pretrained_backbone: false
 num_workers: 2
 train_split: data/annotations/custom_split/train.txt
 val_split: data/annotations/custom_split/val.txt

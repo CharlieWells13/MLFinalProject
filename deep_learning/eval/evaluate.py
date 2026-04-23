@@ -23,7 +23,8 @@ PROJECT_ROOT = DEEP_LEARNING_DIR.parent
 if str(DEEP_LEARNING_DIR) not in sys.path:
     sys.path.append(str(DEEP_LEARNING_DIR))
 
-from models.model_pytorch import build_model  # noqa: E402
+from models.model_scratch import build_model as build_model_scratch  # noqa: E402
+from models.model_pretrained import build_model as build_model_pretrained  # noqa: E402
 from train.data_pipeline import OxfordPetBBoxDataset  # noqa: E402
 
 
@@ -244,7 +245,13 @@ def main() -> None:
         PROJECT_ROOT,
     )
     if checkpoint.is_dir():
-        checkpoint = checkpoint / "model.pt"
+        # Prefer new run layout; keep compatibility with older bundle layout.
+        candidates = [
+            checkpoint / "best_model.pt",
+            checkpoint / "model.pt",
+            checkpoint / "last_model.pt",
+        ]
+        checkpoint = next((p for p in candidates if p.is_file()), checkpoint / "best_model.pt")
     split = str(cfg.get("split", "trainval"))
     image_size = int(cfg.get("image_size", 224))
     batch_size = int(cfg.get("batch_size", 32))
@@ -297,8 +304,15 @@ def main() -> None:
 
     if not checkpoint.is_file():
         raise FileNotFoundError(f"Checkpoint file not found: {checkpoint.resolve()}")
-    model = build_model(pretrained=False, freeze_backbone=False, apply_sigmoid=True).to(device)
     checkpoint_data = torch.load(checkpoint, map_location=device)
+    checkpoint_cfg = checkpoint_data.get("config_used", {}) if isinstance(checkpoint_data, dict) else {}
+    use_pretrained_backbone = bool(
+        checkpoint_cfg.get("use_pretrained_backbone", cfg.get("use_pretrained_backbone", False))
+    )
+    if use_pretrained_backbone:
+        model = build_model_pretrained(pretrained=True, freeze_backbone=False, apply_sigmoid=True).to(device)
+    else:
+        model = build_model_scratch(pretrained=False, freeze_backbone=False, apply_sigmoid=True).to(device)
     if isinstance(checkpoint_data, dict) and "model_state_dict" in checkpoint_data:
         state_dict = checkpoint_data["model_state_dict"]
     else:

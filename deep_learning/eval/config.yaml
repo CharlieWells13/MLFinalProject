@@ -1,5 +1,5 @@
 data_dir: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\data
-checkpoint: deep_learning\checkpoints\model_best_epoch019_valloss0p504873
+checkpoint: deep_learning\checkpoints\model_best_20260423_150329
 
 # split can be: trainval, test, or a path to a custom split file.
 split: data/annotations/custom_split/test.txt
