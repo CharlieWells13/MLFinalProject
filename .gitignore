@@ -1,1 +1,18 @@
 data/
+raw_data/
+preprocessed_data/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pth
+*.pt
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Claude
+.claude/
+
+# macOS
+.DS_Store

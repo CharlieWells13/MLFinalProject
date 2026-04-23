@@ -1,0 +1,67 @@
+import os
+import sys
+import xml.etree.ElementTree as ET
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+# Paths for image directory and annotation directory
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+IMAGE_DIR = os.path.join(_PROJECT_ROOT, "raw_data", "images")
+ANNOTATION_DIR = os.path.join(_PROJECT_ROOT, "raw_data", "annotations", "xmls")
+
+if len(sys.argv) != 2:
+    print(f"Usage: python {os.path.basename(__file__)} <image_filename>")
+    print(f"Example: python {os.path.basename(__file__)} Abyssinian_100.jpg")
+    sys.exit(1)
+
+img_name = sys.argv[1]
+img_path = os.path.join(IMAGE_DIR, img_name)
+
+# The XML file has the same base name as the image
+annotation_name = os.path.splitext(img_name)[0] + ".xml"
+annotation_path = os.path.join(ANNOTATION_DIR, annotation_name)
+
+# Loading the XML annotation
+tree = ET.parse(annotation_path)
+root = tree.getroot()
+
+# Bounding box section is located inside <object> -> <bndbox>
+bndbox = root.find('object').find('bndbox')
+
+# Extracting raw coordinates
+xmin = int(bndbox.find('xmin').text)
+ymin = int(bndbox.find('ymin').text)
+xmax = int(bndbox.find('xmax').text)
+ymax = int(bndbox.find('ymax').text)
+
+# Converting into (x, y, width, height) format
+box_x = xmin
+box_y = ymin
+box_width = xmax - xmin
+box_height = ymax - ymin
+
+# Printing to verify values
+print(f"Image: {img_name}")
+print(f"Original XML Coords (xmin, ymin, xmax, ymax): ({xmin}, {ymin}, {xmax}, {ymax})")
+print(f"Project Format Coords (x, y, width, height): ({box_x}, {box_y}, {box_width}, {box_height})")
+
+# Loading image and drawing bounding box
+data = plt.imread(img_path)
+plt.figure(figsize=(6, 6))
+plt.imshow(data)
+plt.title("Sample Image with Bounding Box")
+plt.axis("off")
+
+ax = plt.gca()
+
+rect = patches.Rectangle(
+    (box_x, box_y),
+    box_width,
+    box_height, 
+    linewidth=2,
+    edgecolor='r',
+    facecolor='none'
+)
+
+ax.add_patch(rect)
+plt.show()
