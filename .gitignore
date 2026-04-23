@@ -16,3 +16,8 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# Project artifacts
+deep_learning/checkpoints/
+deep_learning/eval/runs/
+deep_learning/train/checkpoints/

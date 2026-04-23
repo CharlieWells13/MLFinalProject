@@ -1,0 +1,28 @@
+data_dir: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\data
+epochs: 100
+batch_size: 32
+lr: 0.001
+weight_decay: 0.0001
+optimizer:
+  # options: adamw, adam, sgd
+  name: adamw
+  # optimizer-specific kwargs (example: momentum for sgd, betas/eps for adam/adamw)
+  params: {}
+loss:
+  # options: smooth_l1, smooth_l1_iou, huber, mse, l1
+  name: smooth_l1_iou
+  # loss-specific kwargs
+  # smooth_l1_iou: smooth_l1_weight, iou_weight + optional SmoothL1 kwargs (e.g., beta)
+  params:
+    smooth_l1_weight: 1.0
+    iou_weight: 1.0
+image_size: 224
+freeze_backbone: false
+num_workers: 2
+train_split: data/annotations/custom_split/train.txt
+val_split: data/annotations/custom_split/val.txt
+checkpoint_root: deep_learning/checkpoints
+checkpoint_prefix: model_best
+# optional: fixed folder name for a run (empty means timestamped)
+checkpoint_run_name: ""
+early_stopping_patience: 15
