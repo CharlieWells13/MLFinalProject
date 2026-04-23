@@ -1,0 +1,134 @@
+# Homework 03: Final Project Warm-up (Deliverable II)
+## Option 2: Object Localization
+
+## Scope of This Document
+
+This document is organized by task, with separate subsections for each teammate's contribution.
+
+---
+
+## Task 3: Choose Two Models and Explain Why
+
+### Deep Learning Contribution
+
+For deep learning, I selected a **ResNet-18-based bounding box regression model**.
+
+Model idea:
+- use ResNet-18 as a feature extractor
+- replace classification output with a regression head
+- predict 4 normalized box values: `(x_center, y_center, width, height)`
+
+Why this model fits:
+- ResNet-18 is lightweight enough for this dataset/image size
+- Residual connections improve optimization stability
+- Regression head directly matches localization output format
+
+### Preprocessing Contribution
+
+_To be completed by preprocessing teammate._
+
+### Traditional ML Contribution
+
+_To be completed by traditional ML teammate._
+
+---
+
+## Task 4: Hyperparameter Selection Strategy
+
+### Deep Learning Contribution
+
+I implemented config-driven hyperparameter control so experiments can be changed without code edits.
+
+Configurable items include:
+- `epochs`, `batch_size`, `lr`, `weight_decay`, `image_size`, `freeze_backbone`
+- optimizer `name` and optimizer `params`
+- loss `name` and loss `params`
+- checkpoint output path
+
+This supports reproducible experiments and controlled comparisons.
+
+### Preprocessing Contribution
+
+_To be completed by preprocessing teammate._
+
+### Traditional ML Contribution
+
+_To be completed by traditional ML teammate._
+
+---
+
+## Task 5: Model Performance Evaluation
+
+### Deep Learning Contribution
+
+Training uses regression-focused loss functions (e.g., Smooth L1/Huber/MSE-family losses) for box coordinate prediction.
+
+Evaluation plan for localization:
+- validation loss during training
+- IoU-based comparison between predicted and ground-truth boxes
+- optional threshold report (for example, IoU >= 0.5)
+
+These metrics are appropriate because outputs are continuous box coordinates.
+
+### Preprocessing Contribution
+
+_To be completed by preprocessing teammate._
+
+### Traditional ML Contribution
+
+_To be completed by traditional ML teammate._
+
+---
+
+## Task 6: Underfitting and Overfitting
+
+### Deep Learning Contribution
+
+How I monitor:
+- compare training and validation loss curves
+- low train loss + much higher val loss indicates overfitting
+- high train and val losses indicate underfitting
+
+Mitigation options already supported:
+- tune learning rate, batch size, and epochs via config
+- switch optimizer/loss and adjust their parameters
+- freeze/unfreeze backbone (`freeze_backbone`)
+- use regularization settings (dropout in model head, weight decay)
+
+### Preprocessing Contribution
+
+_To be completed by preprocessing teammate._
+
+### Traditional ML Contribution
+
+_To be completed by traditional ML teammate._
+
+---
+
+## Task 8: Prepare ML Algorithms
+
+### Deep Learning Contribution
+
+Implemented a complete deep learning training pipeline for ResNet-18 bounding box regression.
+
+What training code does:
+- builds the model
+- loads prepared image/annotation data through a training data pipeline
+- selects optimizer/loss from config
+- trains with validation each epoch
+- saves best checkpoint using validation loss
+
+Task 8.1 status:
+- deep learning sample code for localization regression is completed
+
+Task 8.2 status:
+- training/validation loss tracking is implemented
+- IoU-based reporting is planned as the next evaluation extension
+
+### Preprocessing Contribution
+
+_To be completed by preprocessing teammate._
+
+### Traditional ML Contribution
+
+_To be completed by traditional ML teammate._
