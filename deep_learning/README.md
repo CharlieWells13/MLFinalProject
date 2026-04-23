@@ -14,9 +14,8 @@ In this project, we adapted ResNet-18 for regression instead of classification:
 - Removed classification output behavior
 - Added a regression head to output **4 continuous values**
 - Optional output squashing with sigmoid for normalized box targets
-- Implemented both:
+- Implemented in:
   - `models\model_pytorch.py` (from-scratch PyTorch ResNet-18)
-  - `models\model_keras.py` (Keras ResNet-18-style model)
 
 ## Data Processing Pipeline -> Training
 
@@ -30,30 +29,26 @@ The pipelines read dataset splits and annotations, then convert raw examples int
 - Load RGB images from `data\images\*.jpg`
 - Resize to configured `image_size` (default `224`)
 
-Separate framework-specific pipelines:
-- PyTorch: `train\pytorch\data_pipeline.py` -> `DataLoader`
-- Keras: `train\keras\data_pipeline.py` -> `tf.data.Dataset`
+Pipeline implementation:
+- PyTorch: `train\data_pipeline.py` -> `DataLoader`
 
 ## Config-Driven Hyperparameter Training
 
 Training is fully config-driven through YAML files:
-- PyTorch config: `train\pytorch\config.yaml`
-- Keras config: `train\keras\config.yaml`
+- PyTorch config: `train\config.yaml`
 
 Configurable settings include:
 - Core training params (`epochs`, `batch_size`, `lr`, `weight_decay`, `image_size`)
 - Model behavior (`freeze_backbone`)
-- Output checkpoint path (`output`)
+- Checkpoint run settings (`checkpoint_root`, `checkpoint_prefix`, `checkpoint_run_name`)
 - Optimizer selection + extra optimizer params
 - Loss selection + extra loss params
 
-Each training script reads its config and runs train/validation loops:
-- PyTorch: `train\pytorch\train.py`
-- Keras: `train\keras\train.py`
+Training script:
+- PyTorch: `train\train.py`
 
 Example runs:
 
 ```powershell
-python deep_learning\train\pytorch\train.py
-python deep_learning\train\keras\train.py
+python deep_learning\train\train.py
 ```

@@ -1,0 +1,26 @@
+data_dir: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\data
+checkpoint: deep_learning\checkpoints\model_best_epoch019_valloss0p504873
+
+# split can be: trainval, test, or a path to a custom split file.
+split: data/annotations/custom_split/test.txt
+
+batch_size: 32
+image_size: 224
+num_workers: 2
+
+# device can be: auto, cuda, cpu
+device: auto
+
+output_root: deep_learning/eval/runs
+# Leave empty for timestamp name (YYYYMMDD_HHMMSS).
+run_name:
+
+loss:
+  # options: smooth_l1, huber, mse, l1
+  name: smooth_l1
+  # loss-specific kwargs (example: delta for huber, beta for smooth_l1)
+  params: {}
+
+localization_metrics:
+  success_iou_thresholds: [0.50, 0.75, 0.90]
+  plots_subdir: plots
