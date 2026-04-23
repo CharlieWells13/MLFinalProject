@@ -6,6 +6,25 @@
 This document is organized by task, with separate subsections for each teammate's contribution.
 
 ---
+## Task 1: Detail your data preparation strategy for constructing the chosen model.
+
+Stategy:
+- images missing annotations (and therefore bounding boxes) will be skipped/cut, as our project is entirely based off predicting bounding boxes. This still leaves us with plenty of data at 100 images per classification.
+- images will all be scaled to 224x224x3. From my research, this a pretty standard size for doing ML, and we can always change it later if need be
+
+Steps:
+1. Write a script to download the images and annotations from the internet. Since there are a lot of images, this will take a bit. Once the code is ran, the data is stored in [raw_data/](../raw_data/). The images are .jpg files, and the bounding boxes are saved in xml files in the annotations folder.
+2. Write a script to go thru every image and:
+    - if it has an annotation (and therefore a bounding box), convert it to rgb, and resize it to 224x224x3. Then scale the bounding box as well based off how the image was scaled. Then, append the image and bounding box data to their respective .npy arrays
+    - if there is no matching annotation for the image, skip it. 
+3. Download the .npy arrays to the disc, once the notebook is run, you can find them at [preprocessed_data/](../preprocessed_data/)
+
+
+## Task 2
+
+[preprocess_dataset.ipynb](../data_preprocessing/preprocess_dataset.ipynb).
+
+
 
 ## Task 3: Choose Two Models and Explain Why
 
