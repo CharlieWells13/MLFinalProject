@@ -3,6 +3,7 @@ raw_data/
 preprocessed_data/
 
 # Python
+.venv/
 __pycache__/
 *.py[cod]
 *.pth
@@ -18,6 +19,7 @@ __pycache__/
 .DS_Store
 
 # Project artifacts
+machine_learning/models/
 deep_learning/checkpoints/
 deep_learning/eval/runs/
 deep_learning/train/checkpoints/
