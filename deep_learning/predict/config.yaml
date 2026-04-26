@@ -1,0 +1,27 @@
+data_dir: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\data
+checkpoint: deep_learning\checkpoints\best
+
+# split can be a custom split text file or a .npy indices file.
+split: preprocessed_data\test_indices.npy
+
+batch_size: 32
+image_size: 224
+num_workers: 2
+
+# device can be: auto, cuda, cpu
+device: auto
+
+output_dir: deep_learning\predict\runs
+output_root: deep_learning\predict\runs
+# Leave empty for timestamp name (YYYYMMDD_HHMMSS).
+run_name:
+
+loss:
+  # options: smooth_l1, huber, mse, l1
+  name: smooth_l1
+  # loss-specific kwargs (example: delta for huber, beta for smooth_l1)
+  params: {}
+
+localization_metrics:
+  success_iou_thresholds: [0.50, 0.75, 0.90]
+  plots_subdir: plots

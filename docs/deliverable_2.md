@@ -30,17 +30,19 @@ Steps:
 
 ### Deep Learning Contribution
 
-For deep learning, I selected a **ResNet-18-based bounding box regression model**.
+For deep learning, I implemented a **ResNet-18-based bounding box regressor** with two selectable backbones:
+- pretrained ResNet-18 backbone (`models\model_pretrained.py`)
+- from-scratch ResNet-18 backbone (`models\model_scratch.py`)
 
-Model idea:
-- use ResNet-18 as a feature extractor
-- replace classification output with a regression head
-- predict 4 normalized box values: `(x_center, y_center, width, height)`
+Model behavior:
+- predicts 4 normalized values: `(x_center, y_center, width, height)`
+- uses a regression head on top of the backbone feature vector
+- applies sigmoid at output time to keep predictions in `[0, 1]`
 
 Why this model fits:
-- ResNet-18 is lightweight enough for this dataset/image size
-- Residual connections improve optimization stability
-- Regression head directly matches localization output format
+- ResNet-18 is efficient for 224x224 input images
+- residual blocks improve optimization stability
+- output format directly matches localization regression targets
 
 ### Preprocessing Contribution
 
@@ -56,13 +58,15 @@ Random Forest Regressor with PCA preprocessing. Raw images are 224×224×3 = 150
 
 ### Deep Learning Contribution
 
-I implemented config-driven hyperparameter control so experiments can be changed without code edits.
+I implemented config-driven hyperparameter control in `deep_learning\train\config.yaml` so experiments can be changed without code edits.
 
 Configurable items include:
-- `epochs`, `batch_size`, `lr`, `weight_decay`, `image_size`, `freeze_backbone`
+- `epochs`, `batch_size`, `lr`, `weight_decay`, `image_size`
+- backbone controls: `use_pretrained_backbone`, `freeze_backbone`
 - optimizer `name` and optimizer `params`
 - loss `name` and loss `params`
-- checkpoint output path
+- checkpoint run settings (`checkpoint_root`, `checkpoint_prefix`, `checkpoint_run_name`)
+- early stopping (`early_stopping_patience`)
 
 This supports reproducible experiments and controlled comparisons.
 
@@ -80,12 +84,14 @@ Three hyperparameters drive performance: `n_components` (PCA), `n_estimators`, a
 
 ### Deep Learning Contribution
 
-Training uses regression-focused loss functions (e.g., Smooth L1/Huber/MSE-family losses) for box coordinate prediction.
+Training uses regression-focused loss functions for box prediction. Implemented options include:
+- `smooth_l1`, `huber`, `mse`, `l1`
+- `smooth_l1_iou` (combined coordinate + IoU-aware objective)
 
-Evaluation plan for localization:
+Current evaluation flow:
 - validation loss during training
-- IoU-based comparison between predicted and ground-truth boxes
-- optional threshold report (for example, IoU >= 0.5)
+- best-checkpoint selection by validation loss
+- prediction export to XML (one XML per image) for downstream IoU analysis on held-out data
 
 These metrics are appropriate because outputs are continuous box coordinates.
 
@@ -113,6 +119,7 @@ Mitigation options already supported:
 - switch optimizer/loss and adjust their parameters
 - freeze/unfreeze backbone (`freeze_backbone`)
 - use regularization settings (dropout in model head, weight decay)
+- enable early stopping (`early_stopping_patience`)
 
 ### Preprocessing Contribution
 
@@ -128,21 +135,22 @@ Train and test MSE and IoU are compared. A large gap (low train loss, high test 
 
 ### Deep Learning Contribution
 
-Implemented a complete deep learning training pipeline for ResNet-18 bounding box regression.
+Implemented a complete deep learning pipeline for ResNet-18 localization regression, including training and prediction export.
 
 What training code does:
 - builds the model
-- loads prepared image/annotation data through a training data pipeline
+- loads `preprocessed_data\images.npy` and `preprocessed_data\bboxes.npy`
+- uses fixed split indices from `preprocessed_data\train_indices.npy` and `preprocessed_data\val_indices.npy`
 - selects optimizer/loss from config
 - trains with validation each epoch
 - saves best checkpoint using validation loss
 
 Task 8.1 status:
-- deep learning sample code for localization regression is completed
+- deep learning training and checkpointing code for localization regression is completed
 
 Task 8.2 status:
 - training/validation loss tracking is implemented
-- IoU-based reporting is planned as the next evaluation extension
+- prediction pipeline (`deep_learning\predict\predict.py`) is implemented and exports XML predictions for the test split (`preprocessed_data\test_indices.npy`) into per-run folders under `deep_learning\predict\runs`
 
 ### Preprocessing Contribution
 
