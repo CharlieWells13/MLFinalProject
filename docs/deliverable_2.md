@@ -18,12 +18,12 @@ Steps:
     - if it has an annotation (and therefore a bounding box), convert it to rgb, and resize it to 224x224x3. Then scale the bounding box as well based off how the image was scaled. Then, append the image and bounding box data to their respective .npy arrays
     - if there is no matching annotation for the image, skip it. 
 3. Download the .npy arrays to the disc, once the notebook is run, you can find them at [preprocessed_data/](../preprocessed_data/)
+4. Split the data into train/validate/test via indicies so that data only needs to be downloaded once. Data is split by classification as well, as since there are 100 data points of each of the classifications, there will be 70 train, 10 validate, and 20 test data points per classification.
 
 
 ## Task 2
 
 [preprocess_dataset.ipynb](../data_preprocessing/preprocess_dataset.ipynb).
-
 
 
 ## Task 3: Choose Two Models and Explain Why
@@ -44,9 +44,6 @@ Why this model fits:
 - residual blocks improve optimization stability
 - output format directly matches localization regression targets
 
-### Preprocessing Contribution
-
-_To be completed by preprocessing teammate._
 
 ### Traditional ML Contribution
 
@@ -77,9 +74,6 @@ Configurable items include:
 
 This supports reproducible experiments and controlled comparisons.
 
-### Preprocessing Contribution
-
-_To be completed by preprocessing teammate._
 
 ### Traditional ML Contribution
 
@@ -95,6 +89,14 @@ Best values found: `n_components=100`, `n_estimators=200`, `max_depth=None`, `mi
 
 ## Task 5: Model Performance Evaluation
 
+### Preprocessing Contribution
+
+The predictions will be exported to XML from all models and flow into a single (yet to be built) evalution pipeline. The pipeline will be able to perform IoU evaluation via using the command line in some form similar to 
+~ evaluate_prediction.py prediction_data.py
+It will then save the evaluation to a log, so that progress can be easily tracked.
+
+Read more about the specifics of the two models below.
+
 ### Deep Learning Contribution
 
 Training uses regression-focused loss functions for box prediction. Implemented options include:
@@ -108,10 +110,6 @@ Current evaluation flow:
 
 These metrics are appropriate because outputs are continuous box coordinates.
 
-### Preprocessing Contribution
-
-_To be completed by preprocessing teammate._
-
 ### Traditional ML Contribution
 
 Metrics used:
@@ -119,6 +117,7 @@ Metrics used:
 - **IoU** — bounding box overlap (0 = no overlap, 1 = perfect match)
 
 Both are reported on train and test sets.
+
 
 ---
 
@@ -140,7 +139,7 @@ Mitigation options already supported:
 
 ### Preprocessing Contribution
 
-_To be completed by preprocessing teammate._
+The pipeline will log the IoU score on the test data and the train data, allowing for easy comparison for over and underfitting.
 
 ### Traditional ML Contribution
 
@@ -178,9 +177,6 @@ Task 8.2 status:
 - training/validation loss tracking is implemented
 - prediction pipeline (`deep_learning\predict\predict.py`) is implemented and exports XML predictions for the test split (`preprocessed_data\test_indices.npy`) into per-run folders under `deep_learning\predict\runs`
 
-### Preprocessing Contribution
-
-_To be completed by preprocessing teammate._
 
 ### Traditional ML Contribution
 
