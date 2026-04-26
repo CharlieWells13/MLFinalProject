@@ -50,7 +50,14 @@ _To be completed by preprocessing teammate._
 
 ### Traditional ML Contribution
 
-Random Forest Regressor with PCA preprocessing. Raw images are 224×224×3 = 150,528 features per sample, so PCA reduces this to 300 components first. The Random Forest then predicts all 4 bounding box coordinates (x, y, width, height) simultaneously as a multi-output regressor.
+**Random Forest Regressor** with PCA preprocessing:
+- PCA reduces each image from 224×224×3 = 150,528 features down to 100 principal components
+- Random Forest predicts all 4 bounding box coordinates `(x, y, width, height)` simultaneously
+
+Why this model fits:
+- natively supports multi-output regression — one model, four outputs
+- no feature scaling required
+- PCA keeps memory and training time manageable
 
 ---
 
@@ -76,7 +83,13 @@ _To be completed by preprocessing teammate._
 
 ### Traditional ML Contribution
 
-Three hyperparameters drive performance: `n_components` (PCA), `n_estimators`, and `max_depth`. More PCA components preserve more image variance but slow training. More trees reduce prediction variance at the cost of compute. Deeper trees fit training data more closely but risk overfitting. We use `n_components=300`, `n_estimators=300`, and the default `max_depth=None`. Cross-validation for hyperparameter tuning is planned for Deliverable III.
+Hyperparameters searched using `RandomizedSearchCV` (20 combinations, 3-fold CV, scored by mean IoU):
+- `pca__n_components`: [100, 200, 300]
+- `rf__n_estimators`: [100, 200, 300]
+- `rf__max_depth`: [None, 10, 20, 30]
+- `rf__min_samples_leaf`: [1, 2, 4]
+
+Best values found: `n_components=100`, `n_estimators=200`, `max_depth=None`, `min_samples_leaf=2`
 
 ---
 
@@ -101,7 +114,11 @@ _To be completed by preprocessing teammate._
 
 ### Traditional ML Contribution
 
-MSE measures average squared pixel error per coordinate. IoU measures bounding box overlap (0 = no overlap, 1 = perfect). Both are reported on train and test sets.
+Metrics used:
+- **MSE** — average squared pixel error per coordinate
+- **IoU** — bounding box overlap (0 = no overlap, 1 = perfect match)
+
+Both are reported on train and test sets.
 
 ---
 
@@ -127,7 +144,16 @@ _To be completed by preprocessing teammate._
 
 ### Traditional ML Contribution
 
-Train and test MSE and IoU are compared. A large gap (low train loss, high test loss) indicates overfitting. Both being poor indicates underfitting. The results show this clearly — train IoU of 0.588 vs test IoU of 0.373 — consistent with `max_depth=None` allowing fully grown trees that memorize training data. Test IoU is the reliable performance indicator. Mitigation options include limiting `max_depth` or increasing `min_samples_leaf`.
+How I monitor:
+- compare train and test MSE and IoU
+- large gap (low train, high test) indicates overfitting
+- both poor indicates underfitting
+
+Results: train IoU 0.588 vs test IoU 0.373 — overfitting from `max_depth=None` allowing fully grown trees
+
+Mitigation options:
+- limit `max_depth`
+- increase `min_samples_leaf`
 
 ---
 
@@ -158,7 +184,16 @@ _To be completed by preprocessing teammate._
 
 ### Traditional ML Contribution
 
-Code is in [machine_learning/random_forest.ipynb](../machine_learning/random_forest.ipynb). The notebook loads the preprocessed data, applies PCA, splits into 80/20 train/test, runs RandomizedSearchCV (20 combinations, 3-fold CV, scored by mean IoU), and reports MSE and IoU on both sets with a visualization of predictions on sample test images.
+Code is in [machine_learning/random_forest.ipynb](../machine_learning/random_forest.ipynb).
+
+What the notebook does:
+- loads `preprocessed_data\images.npy` and `preprocessed_data\bboxes.npy`
+- uses fixed split indices from `preprocessed_data\train_indices.npy` and `preprocessed_data\test_indices.npy`
+- applies PCA + Random Forest in a sklearn `Pipeline` to prevent data leakage during cross-validation
+- runs `RandomizedSearchCV` (20 combinations, 3-fold CV, scored by mean IoU)
+- reports MSE and IoU on train and test sets with a sample visualization
+- saves trained pipeline to `machine_learning\models\random_forest_pipeline.joblib`
+- exports predictions to `machine_learning\models\predictions.xml`
 
 Best hyperparameters found: `n_components=100`, `n_estimators=200`, `max_depth=None`, `min_samples_leaf=2`
 
