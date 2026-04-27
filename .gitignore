@@ -1,3 +1,4 @@
+# Data
 data/
 raw_data/
 preprocessed_data/
@@ -6,20 +7,32 @@ preprocessed_data/
 .venv/
 __pycache__/
 *.py[cod]
-*.pth
+
+# Model weights & serialized models
 *.pt
+*.pth
+*.joblib
+deep_learning/checkpoints/
+machine_learning/models/
+
+# Training & eval run artifacts
+deep_learning/train/checkpoints/
+deep_learning/eval/runs/
+
+# Prediction runs — canonical XMLs live in machine_learning/predictions/
+deep_learning/predict/runs/
 
 # Jupyter
 .ipynb_checkpoints/
 
-# Claude
+# Tools
 .claude/
-
-# macOS
 .DS_Store
 
-# Project artifacts
-machine_learning/models/
-deep_learning/checkpoints/
-deep_learning/eval/runs/
-deep_learning/train/checkpoints/
+# Eval database — only the index is tracked, not individual report files
+model_evaluation/model_eval_database/*.json
+model_evaluation/model_eval_database/*/
+
+# Intentionally tracked (do not add rules that would catch these):
+#   model_evaluation/model_eval_database/reports_index.md — eval summary
+#   machine_learning/predictions/           — prediction XMLs
