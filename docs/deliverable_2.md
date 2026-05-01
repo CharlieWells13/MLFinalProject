@@ -156,6 +156,10 @@ Mitigation options:
 
 ---
 
+## Task 7: End to End Flowchart
+
+![End to End Flowchart](ML_Final_Flowchart.jpg)
+
 ## Task 8: Prepare ML Algorithms
 
 ### Deep Learning Contribution

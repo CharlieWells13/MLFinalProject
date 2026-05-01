@@ -1,4 +1,5 @@
 import argparse
+import platform
 import sys
 import xml.etree.ElementTree as ET
 from datetime import datetime
@@ -16,6 +17,7 @@ THIS_DIR = Path(__file__).resolve().parent
 DEEP_LEARNING_DIR = THIS_DIR.parent
 PROJECT_ROOT = DEEP_LEARNING_DIR.parent
 DEFAULT_CONFIG_PATH = THIS_DIR / "config.yaml"
+PREPROCESSED_IMAGES_NPY = PROJECT_ROOT / "preprocessed_data" / "images.npy"
 if str(DEEP_LEARNING_DIR) not in sys.path:
     sys.path.append(str(DEEP_LEARNING_DIR))
 
@@ -99,7 +101,15 @@ def select_image_path(image_dir: Path, image_id: str) -> Path | None:
     return None
 
 
-def collect_images(image_dir: Path, split_file: Path | None, max_images: int | None) -> list[Path]:
+def collect_images_with_indices(
+    image_dir: Path, split_file: Path | None, max_images: int | None
+) -> list[tuple[Path, int]]:
+    """Return (image_path, dataset_index) pairs.
+
+    For .npy splits the stored integer values are the dataset indices.
+    For .txt splits the image ID is parsed as an integer index.
+    Without a split file the position in the sorted directory listing is used.
+    """
     all_paths = sorted(
         p
         for p in image_dir.iterdir()
@@ -109,99 +119,116 @@ def collect_images(image_dir: Path, split_file: Path | None, max_images: int | N
     if split_file is not None:
         if split_file.suffix.lower() == ".npy":
             split_indices = parse_split_indices_file(split_file, dataset_size=len(all_paths))
-            paths = [all_paths[i] for i in split_indices]
+            pairs = [(all_paths[i], i) for i in split_indices]
             if max_images is not None:
-                return paths[:max_images]
-            return paths
+                return pairs[:max_images]
+            return pairs
 
         image_ids = parse_split_file(split_file)
-        paths: list[Path] = []
+        pairs: list[tuple[Path, int]] = []
         missing = 0
         for image_id in image_ids:
             image_path = select_image_path(image_dir, image_id)
             if image_path is None:
                 missing += 1
                 continue
-            paths.append(image_path)
-            if max_images is not None and len(paths) >= max_images:
+            try:
+                idx = int(image_id)
+            except ValueError:
+                raise ValueError(
+                    f"Cannot determine dataset_index from image ID '{image_id}'. "
+                    "Use a .npy split file or name images by their integer dataset index."
+                )
+            pairs.append((image_path, idx))
+            if max_images is not None and len(pairs) >= max_images:
                 break
         if missing:
             print(f"Warning: skipped {missing} split entries with missing image files.")
-        return paths
+        return pairs
 
+    pairs = [(p, i) for i, p in enumerate(all_paths)]
     if max_images is not None:
-        return all_paths[:max_images]
-    return all_paths
+        return pairs[:max_images]
+    return pairs
 
 
-def to_xyxy_pixels(xywh_norm: torch.Tensor, width: int, height: int) -> tuple[int, int, int, int]:
-    x_center = float(xywh_norm[0].clamp(0.0, 1.0))
-    y_center = float(xywh_norm[1].clamp(0.0, 1.0))
-    box_w = float(xywh_norm[2].clamp(0.0, 1.0))
-    box_h = float(xywh_norm[3].clamp(0.0, 1.0))
+def to_xywh_pixels(xywh_norm: torch.Tensor, width: int, height: int) -> tuple[float, float, float, float]:
+    """Convert normalized center-xywh to top-left pixel xywh matching ground-truth format."""
+    x_center = float(xywh_norm[0])
+    y_center = float(xywh_norm[1])
+    box_w = float(xywh_norm[2])
+    box_h = float(xywh_norm[3])
 
-    x1 = (x_center - box_w / 2.0) * width
-    y1 = (y_center - box_h / 2.0) * height
-    x2 = (x_center + box_w / 2.0) * width
-    y2 = (y_center + box_h / 2.0) * height
+    x = (x_center - box_w / 2.0) * width
+    y = (y_center - box_h / 2.0) * height
+    w = box_w * width
+    h = box_h * height
 
-    xmin = max(1, min(width, int(round(x1))))
-    ymin = max(1, min(height, int(round(y1))))
-    xmax = max(1, min(width, int(round(x2))))
-    ymax = max(1, min(height, int(round(y2))))
-
-    if xmax < xmin:
-        xmax = xmin
-    if ymax < ymin:
-        ymax = ymin
-    return xmin, ymin, xmax, ymax
+    return x, y, w, h
 
 
-def build_prediction_xml(
-    image_path: Path,
-    width: int,
-    height: int,
-    depth: int,
-    label: str,
-    bbox_xyxy: tuple[int, int, int, int],
+def build_metadata_element(
+    device: torch.device,
+    checkpoint: Path,
+    image_size: int,
+    use_pretrained_backbone: bool,
+    checkpoint_meta: dict[str, Any],
 ) -> ET.Element:
-    xmin, ymin, xmax, ymax = bbox_xyxy
+    meta = ET.Element("metadata")
+    ET.SubElement(meta, "timestamp").text = datetime.now().isoformat(timespec="seconds")
 
-    root = ET.Element("annotation")
-    ET.SubElement(root, "folder").text = image_path.parent.name
-    ET.SubElement(root, "filename").text = image_path.name
+    hw = ET.SubElement(meta, "hardware")
+    ET.SubElement(hw, "device").text = str(device)
+    ET.SubElement(hw, "platform").text = platform.system()
+    ET.SubElement(hw, "os_version").text = platform.release()
+    ET.SubElement(hw, "machine").text = platform.machine()
+    ET.SubElement(hw, "processor").text = platform.processor() or platform.machine()
 
-    source = ET.SubElement(root, "source")
-    ET.SubElement(source, "database").text = "MODEL_PREDICTION"
-    ET.SubElement(source, "annotation").text = "PREDICT_TO_XML"
-    ET.SubElement(source, "image").text = "unknown"
+    hp = ET.SubElement(meta, "hyperparams")
+    ET.SubElement(hp, "backbone").text = "pretrained" if use_pretrained_backbone else "scratch"
+    ET.SubElement(hp, "image_size").text = str(image_size)
+    ET.SubElement(hp, "checkpoint").text = str(checkpoint)
+    for key in ("epochs", "lr", "weight_decay", "batch_size"):
+        val = checkpoint_meta.get(key)
+        if val is not None:
+            ET.SubElement(hp, key).text = str(val)
+    loss_cfg = checkpoint_meta.get("loss", {})
+    if isinstance(loss_cfg, dict) and loss_cfg.get("name"):
+        ET.SubElement(hp, "loss").text = str(loss_cfg["name"])
+    opt_cfg = checkpoint_meta.get("optimizer", {})
+    if isinstance(opt_cfg, dict) and opt_cfg.get("name"):
+        ET.SubElement(hp, "optimizer").text = str(opt_cfg["name"])
 
-    size = ET.SubElement(root, "size")
-    ET.SubElement(size, "width").text = str(width)
-    ET.SubElement(size, "height").text = str(height)
-    ET.SubElement(size, "depth").text = str(depth)
+    return meta
 
-    ET.SubElement(root, "segmented").text = "0"
 
-    obj = ET.SubElement(root, "object")
-    ET.SubElement(obj, "name").text = label
-    ET.SubElement(obj, "pose").text = "Unspecified"
-    ET.SubElement(obj, "truncated").text = "0"
-    ET.SubElement(obj, "occluded").text = "0"
-    ET.SubElement(obj, "difficult").text = "0"
+def build_predictions_xml(
+    model_name: str,
+    predictions: list[tuple[int, float, float, float, float]],
+    metadata: ET.Element,
+) -> ET.Element:
+    """Build a single aggregated predictions XML element.
 
-    bndbox = ET.SubElement(obj, "bndbox")
-    ET.SubElement(bndbox, "xmin").text = str(xmin)
-    ET.SubElement(bndbox, "ymin").text = str(ymin)
-    ET.SubElement(bndbox, "xmax").text = str(xmax)
-    ET.SubElement(bndbox, "ymax").text = str(ymax)
-
+    predictions: list of (dataset_index, x, y, width, height) in pixel coords.
+    """
+    root = ET.Element("predictions")
+    root.set("model", model_name)
+    root.set("n_test", str(len(predictions)))
+    root.append(metadata)
+    for dataset_index, x, y, w, h in predictions:
+        img_el = ET.SubElement(root, "image")
+        img_el.set("dataset_index", str(dataset_index))
+        bbox_el = ET.SubElement(img_el, "predicted_bbox")
+        ET.SubElement(bbox_el, "x").text = f"{x:.4f}"
+        ET.SubElement(bbox_el, "y").text = f"{y:.4f}"
+        ET.SubElement(bbox_el, "width").text = f"{w:.4f}"
+        ET.SubElement(bbox_el, "height").text = f"{h:.4f}"
     return root
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Load a trained bbox model, run inference on images, and write prediction XML files."
+        description="Load a trained bbox model, run inference on images, and write a predictions XML file."
     )
     parser.add_argument(
         "--checkpoint",
@@ -246,12 +273,6 @@ def main() -> None:
         help="Force loading the scratch-backbone model architecture.",
     )
     parser.add_argument(
-        "--label",
-        type=str,
-        default="object",
-        help="Constant placeholder label written into XML (<name>...</name>) for localization-only output.",
-    )
-    parser.add_argument(
         "--max-images",
         type=int,
         default=None,
@@ -287,7 +308,12 @@ def main() -> None:
     elif args.device == "cpu":
         device = torch.device("cpu")
     else:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+        elif torch.backends.mps.is_available():
+            device = torch.device("mps")
+        else:
+            device = torch.device("cpu")
 
     if not image_dir.is_dir():
         raise FileNotFoundError(f"Image directory not found: {image_dir}")
@@ -318,9 +344,28 @@ def main() -> None:
     model.load_state_dict(state_dict)
     model.eval()
 
-    image_paths = collect_images(image_dir=image_dir, split_file=split_file, max_images=max_images)
-    if not image_paths:
-        raise ValueError("No input images found.")
+    model_name = "resnet18_pretrained" if use_pretrained_backbone else "resnet18_scratch"
+
+    # When the split is a .npy index file, load images from the preprocessed images.npy
+    # so dataset_index values correctly match bboxes.npy (both use os.listdir() ordering).
+    # Fallback to loading raw files for .txt splits or when images.npy is absent.
+    use_npy = (
+        split_file is not None
+        and split_file.suffix.lower() == ".npy"
+        and PREPROCESSED_IMAGES_NPY.is_file()
+    )
+
+    if use_npy:
+        _arr = np.load(PREPROCESSED_IMAGES_NPY, mmap_mode="r")
+        split_indices = parse_split_indices_file(split_file, dataset_size=len(_arr))
+        if max_images is not None:
+            split_indices = split_indices[:max_images]
+        n_total = len(split_indices)
+    else:
+        image_pairs = collect_images_with_indices(image_dir=image_dir, split_file=split_file, max_images=max_images)
+        if not image_pairs:
+            raise ValueError("No input images found.")
+        n_total = len(image_pairs)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     transform = transforms.Compose(
@@ -332,36 +377,47 @@ def main() -> None:
 
     print(f"Checkpoint: {checkpoint}")
     print(f"Device: {device}")
-    print(f"Images: {len(image_paths)}")
+    print(f"Images: {n_total}")
     print(f"Output dir: {output_dir}")
     print(f"Backbone: {'pretrained' if use_pretrained_backbone else 'scratch'}")
+    if use_npy:
+        print(f"Image source: {PREPROCESSED_IMAGES_NPY} (preprocessed, correct index ordering)")
 
+    predictions: list[tuple[int, float, float, float, float]] = []
     with torch.no_grad():
-        for i, image_path in enumerate(image_paths, start=1):
-            image = Image.open(image_path).convert("RGB")
-            width, height = image.size
-            depth = len(image.getbands())
+        if use_npy:
+            all_imgs = np.load(PREPROCESSED_IMAGES_NPY, mmap_mode="r")
+            for i, idx in enumerate(split_indices, start=1):
+                # images.npy stores float32 [0,1] in (H,W,C) — convert to (C,H,W) tensor
+                img_arr = np.array(all_imgs[idx])
+                img_tensor = torch.from_numpy(img_arr).permute(2, 0, 1).unsqueeze(0).to(device)
+                pred_xywh_norm = model(img_tensor)[0].detach().cpu()
+                x, y, w, h = to_xywh_pixels(pred_xywh_norm, width=image_size, height=image_size)
+                predictions.append((idx, x, y, w, h))
+                if i % 100 == 0 or i == n_total:
+                    print(f"Processed {i}/{n_total} images...")
+        else:
+            for i, (image_path, dataset_index) in enumerate(image_pairs, start=1):
+                image = Image.open(image_path).convert("RGB")
+                image_tensor = transform(image).unsqueeze(0).to(device)
+                pred_xywh_norm = model(image_tensor)[0].detach().cpu()
+                x, y, w, h = to_xywh_pixels(pred_xywh_norm, width=image_size, height=image_size)
+                predictions.append((dataset_index, x, y, w, h))
+                if i % 100 == 0 or i == n_total:
+                    print(f"Processed {i}/{n_total} images...")
 
-            image_tensor = transform(image).unsqueeze(0).to(device)
-            pred_xywh = model(image_tensor)[0].detach().cpu()
-            bbox_xyxy = to_xyxy_pixels(pred_xywh, width=width, height=height)
-
-            xml_root = build_prediction_xml(
-                image_path=image_path,
-                width=width,
-                height=height,
-                depth=depth,
-                label=args.label,
-                bbox_xyxy=bbox_xyxy,
-            )
-            ET.indent(xml_root)  # type: ignore[attr-defined]
-            out_file = output_dir / f"{image_path.stem}.xml"
-            ET.ElementTree(xml_root).write(out_file, encoding="utf-8", xml_declaration=False)
-
-            if i % 100 == 0 or i == len(image_paths):
-                print(f"Processed {i}/{len(image_paths)} images...")
-
-    print("Done.")
+    metadata = build_metadata_element(
+        device=device,
+        checkpoint=checkpoint,
+        image_size=image_size,
+        use_pretrained_backbone=use_pretrained_backbone,
+        checkpoint_meta=checkpoint_meta,
+    )
+    xml_root = build_predictions_xml(model_name, predictions, metadata)
+    ET.indent(xml_root)  # type: ignore[attr-defined]
+    out_file = output_dir / "predictions.xml"
+    ET.ElementTree(xml_root).write(out_file, encoding="utf-8", xml_declaration=True)
+    print(f"Saved predictions for {len(predictions)} images to {out_file}")
 
 
 if __name__ == "__main__":
