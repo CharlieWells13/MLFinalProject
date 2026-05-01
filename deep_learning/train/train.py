@@ -240,24 +240,29 @@ def main() -> None:
     args = parser.parse_args()
 
     cfg = load_config(args.config)
-    data_dir = resolve_project_path(cfg.get("data_dir", "data"), PROJECT_ROOT)
+    images_npy = resolve_project_path(
+        cfg.get("images_npy", str(Path("preprocessed_data") / "images.npy")),
+        PROJECT_ROOT,
+    )
+    bboxes_npy = resolve_project_path(
+        cfg.get("bboxes_npy", str(Path("preprocessed_data") / "bboxes.npy")),
+        PROJECT_ROOT,
+    )
     epochs = int(cfg.get("epochs", 20))
     batch_size = int(cfg.get("batch_size", 32))
     lr = float(cfg.get("lr", 1e-3))
     weight_decay = float(cfg.get("weight_decay", 1e-4))
-    image_size = int(cfg.get("image_size", 224))
     freeze_backbone = bool(cfg.get("freeze_backbone", False))
     use_pretrained_backbone = bool(cfg.get("use_pretrained_backbone", False))
     num_workers = resolve_num_workers(int(cfg.get("num_workers", 2)))
     early_stopping_patience = int(cfg.get("early_stopping_patience", 5))
-    train_split = resolve_project_path(
-        cfg.get("train_split", str(Path("data") / "annotations" / "custom_split" / "train.txt")),
-        PROJECT_ROOT,
-    )
-    val_split = resolve_project_path(
-        cfg.get("val_split", str(Path("data") / "annotations" / "custom_split" / "val.txt")),
-        PROJECT_ROOT,
-    )
+    split_cfg = cfg.get("split_ratios", {})
+    if not isinstance(split_cfg, dict):
+        raise ValueError("split_ratios must be a mapping")
+    train_ratio = float(split_cfg.get("train", 0.8))
+    val_ratio = float(split_cfg.get("val", 0.1))
+    test_ratio = float(split_cfg.get("test", 0.1))
+    split_seed = int(cfg.get("split_seed", 42))
     checkpoint_root = resolve_project_path(
         cfg.get("checkpoint_root", str(Path("deep_learning") / "checkpoints")),
         PROJECT_ROOT,
@@ -282,12 +287,14 @@ def main() -> None:
         raise ValueError("loss.params must be a mapping")
 
     train_loader, val_loader = create_dataloaders(
-        data_dir=data_dir,
-        image_size=image_size,
+        images=str(images_npy),
+        bboxes=str(bboxes_npy),
         batch_size=batch_size,
         num_workers=num_workers,
-        train_split_file=train_split,
-        val_split_file=val_split,
+        train_ratio=train_ratio,
+        val_ratio=val_ratio,
+        test_ratio=test_ratio,
+        seed=split_seed,
     )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -318,9 +325,14 @@ def main() -> None:
     config_used = {
         **cfg,
         "config_path": str(args.config.resolve()),
-        "data_dir": str(data_dir),
-        "train_split": str(train_split),
-        "val_split": str(val_split),
+        "images_npy": str(images_npy),
+        "bboxes_npy": str(bboxes_npy),
+        "split_ratios": {
+            "train": train_ratio,
+            "val": val_ratio,
+            "test": test_ratio,
+        },
+        "split_seed": split_seed,
         "checkpoint_root": str(checkpoint_root),
         "checkpoint_prefix": checkpoint_prefix,
         "checkpoint_run_name": checkpoint_run_name,

@@ -1,0 +1,28 @@
+<annotation>
+  <folder>images</folder>
+  <filename>english_setter_170.jpg</filename>
+  <source>
+    <database>MODEL_PREDICTION</database>
+    <annotation>PREDICT_TO_XML</annotation>
+    <image>unknown</image>
+  </source>
+  <size>
+    <width>500</width>
+    <height>375</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>object</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>208</xmin>
+      <ymin>67</ymin>
+      <xmax>334</xmax>
+      <ymax>209</ymax>
+    </bndbox>
+  </object>
+</annotation>

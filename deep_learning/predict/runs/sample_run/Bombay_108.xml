@@ -1,0 +1,28 @@
+<annotation>
+  <folder>images</folder>
+  <filename>Bombay_108.jpg</filename>
+  <source>
+    <database>MODEL_PREDICTION</database>
+    <annotation>PREDICT_TO_XML</annotation>
+    <image>unknown</image>
+  </source>
+  <size>
+    <width>400</width>
+    <height>267</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>object</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>238</xmin>
+      <ymin>21</ymin>
+      <xmax>304</xmax>
+      <ymax>94</ymax>
+    </bndbox>
+  </object>
+</annotation>

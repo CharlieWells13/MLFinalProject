@@ -1,0 +1,28 @@
+<annotation>
+  <folder>images</folder>
+  <filename>basset_hound_120.jpg</filename>
+  <source>
+    <database>MODEL_PREDICTION</database>
+    <annotation>PREDICT_TO_XML</annotation>
+    <image>unknown</image>
+  </source>
+  <size>
+    <width>500</width>
+    <height>332</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>object</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>59</xmin>
+      <ymin>19</ymin>
+      <xmax>240</xmax>
+      <ymax>235</ymax>
+    </bndbox>
+  </object>
+</annotation>

@@ -1,0 +1,28 @@
+<annotation>
+  <folder>images</folder>
+  <filename>japanese_chin_3.jpg</filename>
+  <source>
+    <database>MODEL_PREDICTION</database>
+    <annotation>PREDICT_TO_XML</annotation>
+    <image>unknown</image>
+  </source>
+  <size>
+    <width>467</width>
+    <height>350</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>object</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>147</xmin>
+      <ymin>38</ymin>
+      <xmax>351</xmax>
+      <ymax>180</ymax>
+    </bndbox>
+  </object>
+</annotation>

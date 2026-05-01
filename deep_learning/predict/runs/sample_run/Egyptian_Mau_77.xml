@@ -1,0 +1,28 @@
+<annotation>
+  <folder>images</folder>
+  <filename>Egyptian_Mau_77.jpg</filename>
+  <source>
+    <database>MODEL_PREDICTION</database>
+    <annotation>PREDICT_TO_XML</annotation>
+    <image>unknown</image>
+  </source>
+  <size>
+    <width>338</width>
+    <height>303</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>object</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>28</xmin>
+      <ymin>3</ymin>
+      <xmax>108</xmax>
+      <ymax>83</ymax>
+    </bndbox>
+  </object>
+</annotation>

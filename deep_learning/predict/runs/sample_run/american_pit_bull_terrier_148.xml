@@ -1,0 +1,28 @@
+<annotation>
+  <folder>images</folder>
+  <filename>american_pit_bull_terrier_148.jpg</filename>
+  <source>
+    <database>MODEL_PREDICTION</database>
+    <annotation>PREDICT_TO_XML</annotation>
+    <image>unknown</image>
+  </source>
+  <size>
+    <width>300</width>
+    <height>225</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>object</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>90</xmin>
+      <ymin>20</ymin>
+      <xmax>195</xmax>
+      <ymax>144</ymax>
+    </bndbox>
+  </object>
+</annotation>

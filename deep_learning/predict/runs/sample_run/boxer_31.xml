@@ -1,0 +1,28 @@
+<annotation>
+  <folder>images</folder>
+  <filename>boxer_31.jpg</filename>
+  <source>
+    <database>MODEL_PREDICTION</database>
+    <annotation>PREDICT_TO_XML</annotation>
+    <image>unknown</image>
+  </source>
+  <size>
+    <width>448</width>
+    <height>500</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>object</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>55</xmin>
+      <ymin>39</ymin>
+      <xmax>410</xmax>
+      <ymax>397</ymax>
+    </bndbox>
+  </object>
+</annotation>

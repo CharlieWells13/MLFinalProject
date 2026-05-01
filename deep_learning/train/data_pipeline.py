@@ -1,102 +1,143 @@
-import xml.etree.ElementTree as ET
-from pathlib import Path
-
+import numpy as np
 import torch
-from PIL import Image
-from torch.utils.data import DataLoader, Dataset, random_split
-from torchvision import transforms
+from pathlib import Path
+from torch.utils.data import DataLoader, Dataset, Subset
 
 
-def parse_split_file(split_file: Path) -> list[str]:
-    if not split_file.is_file():
-        raise FileNotFoundError(f"Split file not found: {split_file.resolve()}")
-    image_ids = []
-    with split_file.open("r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            image_ids.append(line.split()[0])
-    return image_ids
+ArrayLikeOrPath = np.ndarray | str
 
 
-def load_bbox_xywh(xml_file: Path) -> tuple[float, float, float, float]:
-    root = ET.parse(xml_file).getroot()
-    width = float(root.findtext("./size/width"))
-    height = float(root.findtext("./size/height"))
-    xmin = float(root.findtext("./object/bndbox/xmin"))
-    ymin = float(root.findtext("./object/bndbox/ymin"))
-    xmax = float(root.findtext("./object/bndbox/xmax"))
-    ymax = float(root.findtext("./object/bndbox/ymax"))
-    x_center = ((xmin + xmax) / 2.0) / width
-    y_center = ((ymin + ymax) / 2.0) / height
-    box_width = (xmax - xmin) / width
-    box_height = (ymax - ymin) / height
-    return x_center, y_center, box_width, box_height
+def _load_npy(array_or_path: ArrayLikeOrPath) -> np.ndarray:
+    if isinstance(array_or_path, str):
+        return np.load(array_or_path)
+    return array_or_path
+
+
+def _load_index_array(
+    indices_or_path: np.ndarray | str,
+    dataset_size: int,
+    split_name: str,
+) -> np.ndarray:
+    if isinstance(indices_or_path, str):
+        indices = np.load(indices_or_path)
+    else:
+        indices = indices_or_path
+
+    if indices.ndim != 1:
+        raise ValueError(f"{split_name} indices must be a 1D array, got shape={indices.shape}")
+    if len(indices) == 0:
+        raise ValueError(f"{split_name} indices are empty.")
+    if not np.issubdtype(indices.dtype, np.integer):
+        raise ValueError(f"{split_name} indices must contain integers, got dtype={indices.dtype}")
+
+    if int(indices.min()) < 0 or int(indices.max()) >= dataset_size:
+        raise ValueError(
+            f"{split_name} indices out of range for dataset size {dataset_size}: "
+            f"min={int(indices.min())}, max={int(indices.max())}"
+        )
+
+    unique_count = len(np.unique(indices))
+    if unique_count != len(indices):
+        raise ValueError(
+            f"{split_name} indices contain duplicates: {len(indices) - unique_count} repeated entries."
+        )
+    return indices.astype(np.int64, copy=False)
+
+
+def _default_split_path(filename: str) -> str:
+    project_root = Path(__file__).resolve().parent.parent.parent
+    return str(project_root / "preprocessed_data" / filename)
 
 
 class OxfordPetBBoxDataset(Dataset):
-    def __init__(self, data_dir: Path, split_file: Path, image_size: int = 224):
-        self.data_dir = data_dir
-        self.image_dir = self.data_dir / "images"
-        self.xml_dir = self.data_dir / "annotations" / "xmls"
-        parsed_ids = parse_split_file(split_file)
-        self.image_ids = [
-            image_id
-            for image_id in parsed_ids
-            if (self.image_dir / f"{image_id}.jpg").is_file() and (self.xml_dir / f"{image_id}.xml").is_file()
-        ]
-        missing_count = len(parsed_ids) - len(self.image_ids)
-        if missing_count:
-            print(f"Warning: skipped {missing_count} samples in {split_file.name} with missing image/xml files.")
-        if not self.image_ids:
-            raise ValueError(f"No valid samples found for split: {split_file.resolve()}")
-        self.transform = transforms.Compose(
-            [
-                transforms.Resize((image_size, image_size)),
-                transforms.ToTensor(),
-            ]
-        )
+    """
+    Dataset backed by preprocessed NumPy arrays from preprocess_dataset.ipynb.
+
+    Expected inputs:
+    - images: shape (N, H, W, 3), float in [0, 1] or uint8 in [0, 255]
+    - bboxes: shape (N, 4), format (x, y, width, height) in pixel space
+    """
+
+    def __init__(
+        self,
+        images: ArrayLikeOrPath,
+        bboxes: ArrayLikeOrPath,
+    ):
+        images_np = _load_npy(images)
+        bboxes_np = _load_npy(bboxes)
+
+        if images_np.ndim != 4 or images_np.shape[-1] != 3:
+            raise ValueError(f"Expected images with shape (N, H, W, 3), got {images_np.shape}")
+        if bboxes_np.ndim != 2 or bboxes_np.shape[1] != 4:
+            raise ValueError(f"Expected bboxes with shape (N, 4), got {bboxes_np.shape}")
+        if len(images_np) != len(bboxes_np):
+            raise ValueError(
+                "Image/box count mismatch: "
+                f"images={len(images_np)} bboxes={len(bboxes_np)}"
+            )
+
+        self.images = images_np
+        self.bboxes = bboxes_np.astype(np.float32)
 
     def __len__(self) -> int:
-        return len(self.image_ids)
+        return len(self.images)
 
     def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
-        image_id = self.image_ids[idx]
-        image_path = self.image_dir / f"{image_id}.jpg"
-        xml_path = self.xml_dir / f"{image_id}.xml"
-        image = Image.open(image_path).convert("RGB")
-        image = self.transform(image)
-        target = torch.tensor(load_bbox_xywh(xml_path), dtype=torch.float32)
+        image_np = self.images[idx]
+        if image_np.dtype != np.float32:
+            image_np = image_np.astype(np.float32)
+
+        image = torch.from_numpy(image_np).permute(2, 0, 1).contiguous()
+        if image.max() > 1.0:
+            image = image / 255.0
+
+        x, y, w, h = self.bboxes[idx]
+        img_h, img_w = image.shape[1], image.shape[2]
+
+        # Convert (x, y, w, h) pixel-space top-left format
+        # to normalized (x_center, y_center, width, height).
+        x_center = (x + (w / 2.0)) / float(img_w)
+        y_center = (y + (h / 2.0)) / float(img_h)
+        box_width = w / float(img_w)
+        box_height = h / float(img_h)
+
+        target = torch.tensor([x_center, y_center, box_width, box_height], dtype=torch.float32)
         return image, target
 
 
 def create_dataloaders(
-    data_dir: Path,
-    image_size: int,
+    images: ArrayLikeOrPath,
+    bboxes: ArrayLikeOrPath,
     batch_size: int,
     num_workers: int,
-    train_split_file: Path | None = None,
-    val_split_file: Path | None = None,
+    train_ratio: float = 0.8,
+    val_ratio: float = 0.1,
+    test_ratio: float = 0.1,
+    seed: int = 42,
+    train_indices: np.ndarray | str | None = None,
+    val_indices: np.ndarray | str | None = None,
 ) -> tuple[DataLoader, DataLoader]:
-    train_split = train_split_file or (data_dir / "annotations" / "custom_split" / "train.txt")
-    val_split = val_split_file or (data_dir / "annotations" / "custom_split" / "val.txt")
-    if not data_dir.is_dir():
-        raise FileNotFoundError(f"Data directory not found: {data_dir.resolve()}")
-    train_ds = OxfordPetBBoxDataset(data_dir, train_split, image_size=image_size)
-    try:
-        val_ds = OxfordPetBBoxDataset(data_dir, val_split, image_size=image_size)
-    except ValueError:
-        if len(train_ds) < 2:
-            raise ValueError("Need at least 2 valid training samples to create a validation split.")
-        val_size = max(1, int(0.1 * len(train_ds)))
-        train_size = len(train_ds) - val_size
-        train_ds, val_ds = random_split(
-            train_ds,
-            [train_size, val_size],
-            generator=torch.Generator().manual_seed(42),
-        )
-        print("Warning: test.txt has no valid bbox labels. Using a deterministic 90/10 split from trainval.txt.")
+    dataset = OxfordPetBBoxDataset(images, bboxes)
+    dataset_size = len(dataset)
+
+    # Backward-compatible args retained in signature for callers, but split ratios
+    # are intentionally ignored in favor of exact precomputed index files.
+    _ = (train_ratio, val_ratio, test_ratio)
+
+    train_indices = train_indices or _default_split_path("train_indices.npy")
+    val_indices = val_indices or _default_split_path("val_indices.npy")
+
+    train_idx = _load_index_array(train_indices, dataset_size=dataset_size, split_name="train")
+    val_idx = _load_index_array(val_indices, dataset_size=dataset_size, split_name="val")
+
+    overlap = np.intersect1d(train_idx, val_idx)
+    if len(overlap) > 0:
+        raise ValueError(f"Train/val splits overlap on {len(overlap)} sample(s).")
+
+    train_ds = Subset(dataset, train_idx.tolist())
+    val_ds = Subset(dataset, val_idx.tolist())
+
+    loader_generator = torch.Generator().manual_seed(seed)
 
     train_loader = DataLoader(
         train_ds,
@@ -104,6 +145,7 @@ def create_dataloaders(
         shuffle=True,
         num_workers=num_workers,
         pin_memory=torch.cuda.is_available(),
+        generator=loader_generator,
     )
     val_loader = DataLoader(
         val_ds,

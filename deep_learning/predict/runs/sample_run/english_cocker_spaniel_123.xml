@@ -1,0 +1,28 @@
+<annotation>
+  <folder>images</folder>
+  <filename>english_cocker_spaniel_123.jpg</filename>
+  <source>
+    <database>MODEL_PREDICTION</database>
+    <annotation>PREDICT_TO_XML</annotation>
+    <image>unknown</image>
+  </source>
+  <size>
+    <width>403</width>
+    <height>302</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>object</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>21</xmin>
+      <ymin>132</ymin>
+      <xmax>243</xmax>
+      <ymax>279</ymax>
+    </bndbox>
+  </object>
+</annotation>

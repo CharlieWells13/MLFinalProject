@@ -1,0 +1,28 @@
+<annotation>
+  <folder>images</folder>
+  <filename>Abyssinian_66.jpg</filename>
+  <source>
+    <database>MODEL_PREDICTION</database>
+    <annotation>PREDICT_TO_XML</annotation>
+    <image>unknown</image>
+  </source>
+  <size>
+    <width>320</width>
+    <height>480</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>object</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>187</xmin>
+      <ymin>56</ymin>
+      <xmax>296</xmax>
+      <ymax>175</ymax>
+    </bndbox>
+  </object>
+</annotation>

@@ -1,0 +1,28 @@
+<annotation>
+  <folder>images</folder>
+  <filename>Birman_17.jpg</filename>
+  <source>
+    <database>MODEL_PREDICTION</database>
+    <annotation>PREDICT_TO_XML</annotation>
+    <image>unknown</image>
+  </source>
+  <size>
+    <width>359</width>
+    <height>500</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>object</name>
+    <pose>Unspecified</pose>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>118</xmin>
+      <ymin>16</ymin>
+      <xmax>300</xmax>
+      <ymax>219</ymax>
+    </bndbox>
+  </object>
+</annotation>
