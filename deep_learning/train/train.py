@@ -10,6 +10,11 @@ import torch
 from torch import nn
 from tqdm import tqdm
 import yaml
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+from torch.utils.data import DataLoader, Subset
 
 
 THIS_DIR = Path(__file__).resolve().parent
@@ -18,14 +23,34 @@ PROJECT_ROOT = DEEP_LEARNING_DIR.parent
 if str(DEEP_LEARNING_DIR) not in sys.path:
     sys.path.append(str(DEEP_LEARNING_DIR))
 
-from models.model_scratch import build_model as build_model_scratch  # noqa: E402
 from models.model_pretrained import build_model as build_model_pretrained  # noqa: E402
 try:
     # Works when invoked as a package path from repo root.
-    from train.data_pipeline import create_dataloaders  # type: ignore  # noqa: E402
+    from train.data_pipeline import OxfordPetBBoxDataset  # type: ignore  # noqa: E402
 except ModuleNotFoundError:
     # Works when invoked directly from deep_learning/train.
-    from data_pipeline import create_dataloaders  # type: ignore  # noqa: E402
+    from data_pipeline import OxfordPetBBoxDataset  # type: ignore  # noqa: E402
+
+
+# Fixed training settings (non-listed fields remain hard-coded)
+IMAGES_NPY = Path("preprocessed_data") / "images.npy"
+BBOXES_NPY = Path("preprocessed_data") / "bboxes.npy"
+WEIGHT_DECAY = 1e-4
+FREEZE_BACKBONE = False
+NUM_WORKERS = 2
+EARLY_STOPPING_PATIENCE = 10
+TRAIN_RATIO = 0.8
+VAL_RATIO = 0.1
+TEST_RATIO = 0.1
+SPLIT_SEED = 42
+CHECKPOINT_ROOT = Path("deep_learning") / "checkpoints"
+CHECKPOINT_RUN_NAME = "run"
+OPTIMIZER_NAME = "adamw"
+OPTIMIZER_PARAMS: dict[str, Any] = {}
+LOSS_NAME = "smooth_l1_iou"
+LOSS_PARAMS: dict[str, Any] = {"smooth_l1_weight": 1.0, "iou_weight": 1.0}
+NUM_FOLDS = 5
+TRAIN_INDICES_PATH = Path("preprocessed_data") / "train_indices.npy"
 
 
 def load_config(config_path: Path) -> dict[str, Any]:
@@ -76,10 +101,9 @@ def make_logger(log_path: Path):
 
 def build_run_dir(
     checkpoint_root: Path,
-    checkpoint_prefix: str,
     run_name: str,
 ) -> Path:
-    folder_name = run_name.strip() if run_name.strip() else f"{checkpoint_prefix}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    folder_name = run_name.strip() if run_name.strip() else f"run_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     run_dir = checkpoint_root / folder_name
     run_dir.mkdir(parents=True, exist_ok=True)
     return run_dir
@@ -90,6 +114,103 @@ def format_duration(seconds: float) -> str:
     hours, rem = divmod(total, 3600)
     minutes, secs = divmod(rem, 60)
     return f"{hours:02d}:{minutes:02d}:{secs:02d}"
+
+
+def save_loss_curve(
+    history: list[dict[str, float]],
+    output_path: Path,
+    best_epoch: int,
+) -> None:
+    if not history:
+        raise ValueError("Cannot generate loss curve: history is empty.")
+
+    epochs = [int(item["epoch"]) for item in history]
+    train_losses = [float(item["train_loss"]) for item in history]
+    val_losses = [float(item["val_loss"]) for item in history]
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.plot(epochs, train_losses, marker="o", linewidth=2, label="Train Loss")
+    ax.plot(epochs, val_losses, marker="o", linewidth=2, label="Validation Loss")
+    if best_epoch > 0:
+        ax.axvline(best_epoch, linestyle="--", linewidth=1.5, alpha=0.7, label=f"Best Epoch ({best_epoch})")
+    ax.set_title("Training vs Validation Loss by Epoch")
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Loss")
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=140, bbox_inches="tight")
+    plt.close(fig)
+
+
+def save_cv_summary_curve(
+    fold_best_losses: list[float],
+    output_path: Path,
+) -> None:
+    folds = list(range(1, len(fold_best_losses) + 1))
+    fig, ax = plt.subplots(figsize=(7, 4))
+    ax.plot(folds, fold_best_losses, marker="o", linewidth=2)
+    ax.set_title("Cross-Validation: Best Validation Loss per Fold")
+    ax.set_xlabel("Fold")
+    ax.set_ylabel("Best Validation Loss")
+    ax.set_xticks(folds)
+    ax.grid(True, alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=140, bbox_inches="tight")
+    plt.close(fig)
+
+
+def save_fold_performance_comparison(
+    fold_best_losses: list[float],
+    fold_final_val_losses: list[float],
+    output_path: Path,
+) -> None:
+    folds = list(range(1, len(fold_best_losses) + 1))
+    x = np.arange(len(folds))
+    width = 0.35
+
+    fig, ax = plt.subplots(figsize=(8, 4.5))
+    ax.bar(x - width / 2, fold_best_losses, width=width, label="Best Val Loss")
+    ax.bar(x + width / 2, fold_final_val_losses, width=width, label="Final Val Loss")
+    ax.set_title("Fold Performance Comparison")
+    ax.set_xlabel("Fold")
+    ax.set_ylabel("Validation Loss")
+    ax.set_xticks(x)
+    ax.set_xticklabels([str(f) for f in folds])
+    ax.grid(True, axis="y", alpha=0.3)
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=140, bbox_inches="tight")
+    plt.close(fig)
+
+
+def build_fold_dataloaders(
+    dataset: OxfordPetBBoxDataset,
+    train_idx: np.ndarray,
+    val_idx: np.ndarray,
+    batch_size: int,
+    num_workers: int,
+    seed: int,
+) -> tuple[DataLoader, DataLoader]:
+    train_ds = Subset(dataset, train_idx.tolist())
+    val_ds = Subset(dataset, val_idx.tolist())
+    loader_generator = torch.Generator().manual_seed(seed)
+    train_loader = DataLoader(
+        train_ds,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        pin_memory=torch.cuda.is_available(),
+        generator=loader_generator,
+    )
+    val_loader = DataLoader(
+        val_ds,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+        pin_memory=torch.cuda.is_available(),
+    )
+    return train_loader, val_loader
 
 
 def save_model_checkpoint(
@@ -240,62 +361,50 @@ def main() -> None:
     args = parser.parse_args()
 
     cfg = load_config(args.config)
-    images_npy = resolve_project_path(
-        cfg.get("images_npy", str(Path("preprocessed_data") / "images.npy")),
-        PROJECT_ROOT,
-    )
-    bboxes_npy = resolve_project_path(
-        cfg.get("bboxes_npy", str(Path("preprocessed_data") / "bboxes.npy")),
-        PROJECT_ROOT,
-    )
+    images_npy_cfg = cfg.get("images_npy", str(IMAGES_NPY))
+    bboxes_npy_cfg = cfg.get("bboxes_npy", str(BBOXES_NPY))
+    train_indices_cfg = cfg.get("train_indices_path", str(TRAIN_INDICES_PATH))
+    checkpoint_root_cfg = cfg.get("checkpoint_root", str(CHECKPOINT_ROOT))
+    checkpoint_run_name_cfg = cfg.get("checkpoint_run_name", CHECKPOINT_RUN_NAME)
+    num_folds_cfg = cfg.get("num_folds", cfg.get("num_foflds", NUM_FOLDS))
+
+    images_npy = resolve_project_path(images_npy_cfg, PROJECT_ROOT)
+    bboxes_npy = resolve_project_path(bboxes_npy_cfg, PROJECT_ROOT)
     epochs = int(cfg.get("epochs", 20))
     batch_size = int(cfg.get("batch_size", 32))
     lr = float(cfg.get("lr", 1e-3))
-    weight_decay = float(cfg.get("weight_decay", 1e-4))
-    freeze_backbone = bool(cfg.get("freeze_backbone", False))
-    use_pretrained_backbone = bool(cfg.get("use_pretrained_backbone", False))
-    num_workers = resolve_num_workers(int(cfg.get("num_workers", 2)))
-    early_stopping_patience = int(cfg.get("early_stopping_patience", 5))
-    split_cfg = cfg.get("split_ratios", {})
-    if not isinstance(split_cfg, dict):
-        raise ValueError("split_ratios must be a mapping")
-    train_ratio = float(split_cfg.get("train", 0.8))
-    val_ratio = float(split_cfg.get("val", 0.1))
-    test_ratio = float(split_cfg.get("test", 0.1))
-    split_seed = int(cfg.get("split_seed", 42))
-    checkpoint_root = resolve_project_path(
-        cfg.get("checkpoint_root", str(Path("deep_learning") / "checkpoints")),
-        PROJECT_ROOT,
-    )
-    checkpoint_prefix = str(cfg.get("checkpoint_prefix", "model_best"))
-    checkpoint_run_name = str(cfg.get("checkpoint_run_name", ""))
+    weight_decay = WEIGHT_DECAY
+    freeze_backbone = FREEZE_BACKBONE
+    num_workers = resolve_num_workers(NUM_WORKERS)
+    early_stopping_patience = EARLY_STOPPING_PATIENCE
+    train_ratio = TRAIN_RATIO
+    val_ratio = VAL_RATIO
+    test_ratio = TEST_RATIO
+    split_seed = SPLIT_SEED
+    checkpoint_root = resolve_project_path(checkpoint_root_cfg, PROJECT_ROOT)
+    checkpoint_run_name = str(checkpoint_run_name_cfg)
+    num_folds = int(num_folds_cfg)
+    if num_folds < 2:
+        raise ValueError("num_folds must be at least 2.")
+    optimizer_name = OPTIMIZER_NAME
+    optimizer_params = dict(OPTIMIZER_PARAMS)
+    loss_name = LOSS_NAME
+    loss_params = dict(LOSS_PARAMS)
+    train_indices_path = resolve_project_path(train_indices_cfg, PROJECT_ROOT)
+    train_indices = np.load(train_indices_path).astype(np.int64, copy=False)
 
-    optimizer_cfg = cfg.get("optimizer", {})
-    if not isinstance(optimizer_cfg, dict):
-        raise ValueError("optimizer must be a mapping")
-    optimizer_name = str(optimizer_cfg.get("name", "adamw"))
-    optimizer_params = optimizer_cfg.get("params", {})
-    if not isinstance(optimizer_params, dict):
-        raise ValueError("optimizer.params must be a mapping")
-
-    loss_cfg = cfg.get("loss", {})
-    if not isinstance(loss_cfg, dict):
-        raise ValueError("loss must be a mapping")
-    loss_name = str(loss_cfg.get("name", "smooth_l1"))
-    loss_params = loss_cfg.get("params", {})
-    if not isinstance(loss_params, dict):
-        raise ValueError("loss.params must be a mapping")
-
-    train_loader, val_loader = create_dataloaders(
-        images=str(images_npy),
-        bboxes=str(bboxes_npy),
-        batch_size=batch_size,
-        num_workers=num_workers,
-        train_ratio=train_ratio,
-        val_ratio=val_ratio,
-        test_ratio=test_ratio,
-        seed=split_seed,
-    )
+    dataset = OxfordPetBBoxDataset(str(images_npy), str(bboxes_npy))
+    dataset_size = len(dataset)
+    if train_indices.ndim != 1 or len(train_indices) == 0:
+        raise ValueError("train_indices.npy must be a non-empty 1D array.")
+    if int(train_indices.min()) < 0 or int(train_indices.max()) >= dataset_size:
+        raise ValueError(
+            f"train_indices.npy contains out-of-range values for dataset size {dataset_size}: "
+            f"min={int(train_indices.min())}, max={int(train_indices.max())}"
+        )
+    if len(np.unique(train_indices)) != len(train_indices):
+        raise ValueError("train_indices.npy contains duplicate indices.")
+    fold_indices = np.array_split(train_indices, num_folds)
 
     if torch.cuda.is_available():
         device = torch.device("cuda")
@@ -303,28 +412,8 @@ def main() -> None:
         device = torch.device("mps")
     else:
         device = torch.device("cpu")
-    if use_pretrained_backbone:
-        model = build_model_pretrained(pretrained=True, freeze_backbone=freeze_backbone, apply_sigmoid=True).to(device)
-    else:
-        model = build_model_scratch(pretrained=False, freeze_backbone=freeze_backbone, apply_sigmoid=True).to(device)
-    criterion = build_loss(loss_name, loss_params)
-    optimizer = build_optimizer(
-        optimizer_name,
-        [p for p in model.parameters() if p.requires_grad],
-        lr,
-        weight_decay,
-        optimizer_params,
-    )
-
-    best_val_loss = float("inf")
-    best_epoch = 0
-    epochs_without_improvement = 0
-    history: list[dict[str, float]] = []
-    last_checkpoint: dict[str, Any] | None = None
     checkpoint_root.mkdir(parents=True, exist_ok=True)
-    run_dir = build_run_dir(checkpoint_root, checkpoint_prefix, checkpoint_run_name)
-    best_model_path = run_dir / "best_model.pt"
-    last_model_path = run_dir / "last_model.pt"
+    run_dir = build_run_dir(checkpoint_root, checkpoint_run_name)
     log = make_logger(run_dir / "training_log.txt")
 
     config_used = {
@@ -339,77 +428,143 @@ def main() -> None:
         },
         "split_seed": split_seed,
         "checkpoint_root": str(checkpoint_root),
-        "checkpoint_prefix": checkpoint_prefix,
         "checkpoint_run_name": checkpoint_run_name,
         "run_dir": str(run_dir),
         "device": str(device),
-        "use_pretrained_backbone": use_pretrained_backbone,
+        "use_pretrained_backbone": True,
         "resolved_num_workers": num_workers,
+        "train_indices_path": str(train_indices_path),
+        "num_folds": num_folds,
     }
     save_yaml(config_used, run_dir / "config_used.yaml")
     log(f"Checkpoint run dir: {run_dir}")
+    log(f"Cross-validation folds: {num_folds}")
     train_start_time = time.perf_counter()
+    fold_best_losses: list[float] = []
+    fold_final_val_losses: list[float] = []
+    overall_best_val_loss = float("inf")
+    overall_best_checkpoint: dict[str, Any] | None = None
+    overall_best_fold = 0
+    overall_best_epoch = 0
 
-    for epoch in range(1, epochs + 1):
-        train_loss = run_epoch(model, train_loader, criterion, optimizer, device, epoch, epochs)
-        val_loss = run_epoch(model, val_loader, criterion, optimizer=None, device=device, epoch=epoch, epochs=epochs)
-        log(f"Epoch {epoch:03d}/{epochs} | train_loss={train_loss:.6f} | val_loss={val_loss:.6f}")
-        history.append({"epoch": float(epoch), "train_loss": train_loss, "val_loss": val_loss})
+    for fold_idx in range(num_folds):
+        val_idx = fold_indices[fold_idx]
+        train_parts = [fold_indices[i] for i in range(num_folds) if i != fold_idx]
+        train_idx = np.concatenate(train_parts, axis=0)
+        fold_number = fold_idx + 1
+        fold_seed = split_seed + fold_idx
+        train_loader, val_loader = build_fold_dataloaders(
+            dataset=dataset,
+            train_idx=train_idx,
+            val_idx=val_idx,
+            batch_size=batch_size,
+            num_workers=num_workers,
+            seed=fold_seed,
+        )
 
-        current_checkpoint = {
-            "epoch": epoch,
-            "model_state_dict": model.state_dict(),
-            "optimizer_state_dict": optimizer.state_dict(),
-            "train_loss": train_loss,
-            "val_loss": val_loss,
-            "config_used": config_used,
-        }
-        last_checkpoint = current_checkpoint
+        fold_model_path = run_dir / f"fold_{fold_number}.pt"
 
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            best_epoch = epoch
-            epochs_without_improvement = 0
-            saved_best_path = save_model_checkpoint(current_checkpoint, best_model_path)
-            log(f"Updated best checkpoint: {saved_best_path}")
-        else:
-            epochs_without_improvement += 1
+        model = build_model_pretrained(pretrained=True, freeze_backbone=freeze_backbone, apply_sigmoid=True).to(device)
+        criterion = build_loss(loss_name, loss_params)
+        optimizer = build_optimizer(
+            optimizer_name,
+            [p for p in model.parameters() if p.requires_grad],
+            lr,
+            weight_decay,
+            optimizer_params,
+        )
+
+        best_val_loss = float("inf")
+        best_epoch = 0
+        epochs_without_improvement = 0
+        history: list[dict[str, float]] = []
+        last_checkpoint: dict[str, Any] | None = None
+        log(
+            f"[Fold {fold_number}/{num_folds}] "
+            f"train_samples={len(train_idx)} val_samples={len(val_idx)}"
+        )
+
+        for epoch in range(1, epochs + 1):
+            train_loss = run_epoch(model, train_loader, criterion, optimizer, device, epoch, epochs)
+            val_loss = run_epoch(model, val_loader, criterion, optimizer=None, device=device, epoch=epoch, epochs=epochs)
             log(
-                f"No validation improvement for {epochs_without_improvement} epoch(s) "
-                f"(patience={early_stopping_patience})."
+                f"[Fold {fold_number}/{num_folds}] "
+                f"Epoch {epoch:03d}/{epochs} | train_loss={train_loss:.6f} | val_loss={val_loss:.6f}"
             )
-            if epochs_without_improvement >= early_stopping_patience:
+            history.append({"epoch": float(epoch), "train_loss": train_loss, "val_loss": val_loss})
+
+            current_checkpoint = {
+                "fold": fold_number,
+                "epoch": epoch,
+                "model_state_dict": model.state_dict(),
+                "optimizer_state_dict": optimizer.state_dict(),
+                "train_loss": train_loss,
+                "val_loss": val_loss,
+                "config_used": config_used,
+            }
+            last_checkpoint = current_checkpoint
+
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                best_epoch = epoch
+                epochs_without_improvement = 0
+                saved_best_path = save_model_checkpoint(current_checkpoint, fold_model_path)
+                log(f"[Fold {fold_number}/{num_folds}] Updated best checkpoint: {saved_best_path}")
+                if val_loss < overall_best_val_loss:
+                    overall_best_val_loss = val_loss
+                    overall_best_checkpoint = current_checkpoint
+                    overall_best_fold = fold_number
+                    overall_best_epoch = epoch
+            else:
+                epochs_without_improvement += 1
                 log(
-                    f"Early stopping triggered at epoch {epoch}: "
-                    f"val_loss did not improve for {early_stopping_patience} epochs."
+                    f"[Fold {fold_number}/{num_folds}] "
+                    f"No validation improvement for {epochs_without_improvement} epoch(s) "
+                    f"(patience={early_stopping_patience})."
                 )
-                break
+                if epochs_without_improvement >= early_stopping_patience:
+                    log(
+                        f"[Fold {fold_number}/{num_folds}] Early stopping at epoch {epoch}: "
+                        f"val_loss did not improve for {early_stopping_patience} epochs."
+                    )
+                    break
 
-    if last_checkpoint is None:
-        raise RuntimeError("No training epochs were executed; cannot save last checkpoint.")
+        if last_checkpoint is None:
+            raise RuntimeError(f"No training epochs were executed for fold {fold_number}.")
 
-    saved_last_path = save_model_checkpoint(last_checkpoint, last_model_path)
+        fold_curve_path = run_dir / f"fold_{fold_number}_train_vs_val_loss.png"
+        save_loss_curve(history, fold_curve_path, best_epoch)
+        fold_best_losses.append(best_val_loss)
+        fold_final_val_losses.append(float(last_checkpoint["val_loss"]))
+        log(f"[Fold {fold_number}/{num_folds}] Saved best checkpoint: {fold_model_path}")
+        log(f"[Fold {fold_number}/{num_folds}] Saved loss curve: {fold_curve_path}")
+        log(
+            f"[Fold {fold_number}/{num_folds}] "
+            f"best_epoch={best_epoch} best_val_loss={best_val_loss:.6f}"
+        )
+
+    if overall_best_checkpoint is None:
+        raise RuntimeError("No best checkpoint produced across folds.")
+    best_overall_path = run_dir / "best.pt"
+    saved_best_overall_path = save_model_checkpoint(overall_best_checkpoint, best_overall_path)
+
     total_train_seconds = time.perf_counter() - train_start_time
-    run_summary = {
-        "completed_at": datetime.now().isoformat(timespec="seconds"),
-        "total_train_seconds": total_train_seconds,
-        "total_train_duration_hms": format_duration(total_train_seconds),
-        "best_epoch": best_epoch,
-        "best_val_loss": best_val_loss,
-        "final_epoch": int(last_checkpoint["epoch"]),
-        "final_train_loss": float(last_checkpoint["train_loss"]),
-        "final_val_loss": float(last_checkpoint["val_loss"]),
-        "best_model_path": str(best_model_path),
-        "last_model_path": str(saved_last_path),
-        "history": history,
-    }
-    save_yaml(run_summary, run_dir / "run_summary.yaml")
-    log(f"Saved last checkpoint: {saved_last_path}")
-    log(f"Saved run summary: {run_dir / 'run_summary.yaml'}")
+    cv_curve_path = run_dir / "cv_best_val_loss.png"
+    save_cv_summary_curve(fold_best_losses, cv_curve_path)
+    fold_compare_path = run_dir / "fold_performance_comparison.png"
+    save_fold_performance_comparison(fold_best_losses, fold_final_val_losses, fold_compare_path)
+    mean_best_val_loss = float(np.mean(np.array(fold_best_losses, dtype=np.float64)))
+    log(f"Saved CV summary curve: {cv_curve_path}")
+    log(f"Saved fold performance comparison: {fold_compare_path}")
+    log(
+        f"Saved overall best checkpoint: {saved_best_overall_path} "
+        f"(fold={overall_best_fold}, epoch={overall_best_epoch}, val_loss={overall_best_val_loss:.6f})"
+    )
+    log(f"Cross-validation mean best val loss: {mean_best_val_loss:.6f}")
     log(
         "Total training time: "
-        f"{run_summary['total_train_duration_hms']} "
-        f"({run_summary['total_train_seconds']:.2f} seconds)"
+        f"{format_duration(total_train_seconds)} "
+        f"({total_train_seconds:.2f} seconds)"
     )
 
 
