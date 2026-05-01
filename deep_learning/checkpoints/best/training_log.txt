@@ -1,0 +1,108 @@
+[2026-04-26T16:30:56] Checkpoint run dir: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056
+[2026-04-26T16:31:28] Epoch 001/30 | train_loss=0.527543 | val_loss=0.517878
+[2026-04-26T16:31:28] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:31:58] Epoch 002/30 | train_loss=0.387641 | val_loss=0.406272
+[2026-04-26T16:31:58] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:32:27] Epoch 003/30 | train_loss=0.351962 | val_loss=0.325996
+[2026-04-26T16:32:27] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:33:00] Epoch 004/30 | train_loss=0.319026 | val_loss=0.347808
+[2026-04-26T16:33:00] No validation improvement for 1 epoch(s) (patience=15).
+[2026-04-26T16:33:31] Epoch 005/30 | train_loss=0.304525 | val_loss=0.306570
+[2026-04-26T16:33:32] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:34:01] Epoch 006/30 | train_loss=0.288005 | val_loss=0.322705
+[2026-04-26T16:34:01] No validation improvement for 1 epoch(s) (patience=15).
+[2026-04-26T16:34:31] Epoch 007/30 | train_loss=0.287482 | val_loss=0.274206
+[2026-04-26T16:34:31] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:35:01] Epoch 008/30 | train_loss=0.273628 | val_loss=0.296845
+[2026-04-26T16:35:01] No validation improvement for 1 epoch(s) (patience=15).
+[2026-04-26T16:35:33] Epoch 009/30 | train_loss=0.261077 | val_loss=0.320634
+[2026-04-26T16:35:33] No validation improvement for 2 epoch(s) (patience=15).
+[2026-04-26T16:36:05] Epoch 010/30 | train_loss=0.252146 | val_loss=0.296329
+[2026-04-26T16:36:05] No validation improvement for 3 epoch(s) (patience=15).
+[2026-04-26T16:36:39] Epoch 011/30 | train_loss=0.251737 | val_loss=0.288303
+[2026-04-26T16:36:39] No validation improvement for 4 epoch(s) (patience=15).
+[2026-04-26T16:37:12] Epoch 012/30 | train_loss=0.231929 | val_loss=0.260685
+[2026-04-26T16:37:12] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:37:45] Epoch 013/30 | train_loss=0.233184 | val_loss=0.281968
+[2026-04-26T16:37:45] No validation improvement for 1 epoch(s) (patience=15).
+[2026-04-26T16:38:17] Epoch 014/30 | train_loss=0.225126 | val_loss=0.250580
+[2026-04-26T16:38:18] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:38:49] Epoch 015/30 | train_loss=0.223634 | val_loss=0.274535
+[2026-04-26T16:38:49] No validation improvement for 1 epoch(s) (patience=15).
+[2026-04-26T16:39:21] Epoch 016/30 | train_loss=0.225321 | val_loss=0.269332
+[2026-04-26T16:39:21] No validation improvement for 2 epoch(s) (patience=15).
+[2026-04-26T16:39:53] Epoch 017/30 | train_loss=0.212112 | val_loss=0.246014
+[2026-04-26T16:39:53] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:40:25] Epoch 018/30 | train_loss=0.208579 | val_loss=0.246552
+[2026-04-26T16:40:25] No validation improvement for 1 epoch(s) (patience=15).
+[2026-04-26T16:40:58] Epoch 019/30 | train_loss=0.195245 | val_loss=0.239114
+[2026-04-26T16:40:58] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:41:30] Epoch 020/30 | train_loss=0.199597 | val_loss=0.244216
+[2026-04-26T16:41:30] No validation improvement for 1 epoch(s) (patience=15).
+[2026-04-26T16:42:00] Epoch 021/30 | train_loss=0.208571 | val_loss=0.235834
+[2026-04-26T16:42:01] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:42:34] Epoch 022/30 | train_loss=0.193473 | val_loss=0.237841
+[2026-04-26T16:42:34] No validation improvement for 1 epoch(s) (patience=15).
+[2026-04-26T16:43:05] Epoch 023/30 | train_loss=0.192251 | val_loss=0.244743
+[2026-04-26T16:43:05] No validation improvement for 2 epoch(s) (patience=15).
+[2026-04-26T16:43:37] Epoch 024/30 | train_loss=0.193621 | val_loss=0.253219
+[2026-04-26T16:43:37] No validation improvement for 3 epoch(s) (patience=15).
+[2026-04-26T16:44:08] Epoch 025/30 | train_loss=0.189531 | val_loss=0.249415
+[2026-04-26T16:44:08] No validation improvement for 4 epoch(s) (patience=15).
+[2026-04-26T16:44:39] Epoch 026/30 | train_loss=0.176318 | val_loss=0.228512
+[2026-04-26T16:44:39] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:45:12] Epoch 027/30 | train_loss=0.178118 | val_loss=0.220181
+[2026-04-26T16:45:12] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:45:44] Epoch 028/30 | train_loss=0.178985 | val_loss=0.238755
+[2026-04-26T16:45:44] No validation improvement for 1 epoch(s) (patience=15).
+[2026-04-26T16:46:15] Epoch 029/30 | train_loss=0.166288 | val_loss=0.224683
+[2026-04-26T16:46:15] No validation improvement for 2 epoch(s) (patience=15).
+[2026-04-26T16:46:46] Epoch 030/30 | train_loss=0.165255 | val_loss=0.216884
+[2026-04-26T16:46:47] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\best_model.pt
+[2026-04-26T16:46:47] Saved last checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\last_model.pt
+[2026-04-26T16:46:47] Saved run summary: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\model_best_20260426_163056\run_summary.yaml
+[2026-04-26T16:46:47] Total training time: 00:15:51 (951.16 seconds)
+[2026-05-01T15:57:50] Checkpoint run dir: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best
+[2026-05-01T16:00:41] Checkpoint run dir: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best
+[2026-05-01T16:01:26] Epoch 001/100 | train_loss=0.510059 | val_loss=0.437353
+[2026-05-01T16:01:26] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best\best_model.pt
+[2026-05-01T16:02:10] Epoch 002/100 | train_loss=0.388079 | val_loss=0.351757
+[2026-05-01T16:02:10] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best\best_model.pt
+[2026-05-01T16:02:53] Epoch 003/100 | train_loss=0.342292 | val_loss=0.322613
+[2026-05-01T16:02:53] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best\best_model.pt
+[2026-05-01T16:03:35] Epoch 004/100 | train_loss=0.325047 | val_loss=0.312934
+[2026-05-01T16:03:35] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best\best_model.pt
+[2026-05-01T16:04:13] Epoch 005/100 | train_loss=0.311337 | val_loss=0.316420
+[2026-05-01T16:04:13] No validation improvement for 1 epoch(s) (patience=5).
+[2026-05-01T16:04:53] Epoch 006/100 | train_loss=0.288680 | val_loss=0.279117
+[2026-05-01T16:04:53] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best\best_model.pt
+[2026-05-01T16:05:34] Epoch 007/100 | train_loss=0.284244 | val_loss=0.298001
+[2026-05-01T16:05:34] No validation improvement for 1 epoch(s) (patience=5).
+[2026-05-01T16:06:12] Epoch 008/100 | train_loss=0.272670 | val_loss=0.269681
+[2026-05-01T16:06:12] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best\best_model.pt
+[2026-05-01T16:06:50] Epoch 009/100 | train_loss=0.260620 | val_loss=0.327087
+[2026-05-01T16:06:50] No validation improvement for 1 epoch(s) (patience=5).
+[2026-05-01T16:07:29] Epoch 010/100 | train_loss=0.260154 | val_loss=0.265563
+[2026-05-01T16:07:29] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best\best_model.pt
+[2026-05-01T16:08:08] Epoch 011/100 | train_loss=0.248226 | val_loss=0.242535
+[2026-05-01T16:08:08] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best\best_model.pt
+[2026-05-01T16:08:45] Epoch 012/100 | train_loss=0.239038 | val_loss=0.260817
+[2026-05-01T16:08:45] No validation improvement for 1 epoch(s) (patience=5).
+[2026-05-01T16:09:23] Epoch 013/100 | train_loss=0.227134 | val_loss=0.313488
+[2026-05-01T16:09:23] No validation improvement for 2 epoch(s) (patience=5).
+[2026-05-01T16:10:02] Epoch 014/100 | train_loss=0.226261 | val_loss=0.224772
+[2026-05-01T16:10:02] Updated best checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best\best_model.pt
+[2026-05-01T16:10:39] Epoch 015/100 | train_loss=0.223104 | val_loss=0.271251
+[2026-05-01T16:10:39] No validation improvement for 1 epoch(s) (patience=5).
+[2026-05-01T16:11:17] Epoch 016/100 | train_loss=0.219286 | val_loss=0.255929
+[2026-05-01T16:11:17] No validation improvement for 2 epoch(s) (patience=5).
+[2026-05-01T16:11:56] Epoch 017/100 | train_loss=0.218284 | val_loss=0.270135
+[2026-05-01T16:11:56] No validation improvement for 3 epoch(s) (patience=5).
+[2026-05-01T16:12:36] Epoch 018/100 | train_loss=0.205011 | val_loss=0.254221
+[2026-05-01T16:12:36] No validation improvement for 4 epoch(s) (patience=5).
+[2026-05-01T16:13:18] Epoch 019/100 | train_loss=0.199640 | val_loss=0.230748
+[2026-05-01T16:13:18] No validation improvement for 5 epoch(s) (patience=5).
+[2026-05-01T16:13:18] Early stopping triggered at epoch 19: val_loss did not improve for 5 epochs.
+[2026-05-01T16:13:18] Saved last checkpoint: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best\last_model.pt
+[2026-05-01T16:13:18] Saved run summary: C:\Users\Finn\Downloads\SLU\Spring_2026\CSCI_4750\final project\deep_learning\checkpoints\best\run_summary.yaml
+[2026-05-01T16:13:18] Total training time: 00:12:37 (757.40 seconds)

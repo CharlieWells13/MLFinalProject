@@ -12,7 +12,6 @@ __pycache__/
 *.pt
 *.pth
 *.joblib
-deep_learning/checkpoints/
 machine_learning/models/
 
 # Training & eval run artifacts
