@@ -1,5 +1,22 @@
 # Model Evaluation Reports
-_Updated: 2026-05-01 16:22:34_
+_Updated: 2026-05-02 00:50:13_
+
+---
+
+## 2026-05-02 00:50:13 — random_forest
+
+| Split | Mean IoU | Median IoU | % preds ≥ IoU 0.50 | % preds ≥ IoU 0.75 | n |
+|-------|----------|------------|--------------------|--------------------|-|
+| **Train** | 1.000 | 1.000 | 100.0% | 100.0% | 2580 |
+| **Test** | 0.392 | 0.400 | 33.9% | 3.7% | 738 |
+
+**Hyperparams:** n_estimators=200  ·  max_depth=None  ·  min_samples_leaf=None  ·  pca_n_components=200
+
+![IoU Distribution](20260502_005013_random_forest\iou_distribution.png)
+
+| Train sample | Test sample |
+|---|---|
+| ![Train](20260502_005013_random_forest\sample_bbox_train.png) | ![Test](20260502_005013_random_forest\sample_bbox_test.png) |
 
 ---
 
