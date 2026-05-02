@@ -47,14 +47,15 @@ Why this model fits:
 
 ### Traditional ML Contribution
 
-**Random Forest Regressor** with PCA preprocessing:
-- PCA reduces each image from 224×224×3 = 150,528 features down to 100 principal components
-- Random Forest predicts all 4 bounding box coordinates `(x, y, width, height)` simultaneously
+**ExtraTreesRegressor** with HOG feature extraction and PCA:
+- HOG (Histogram of Oriented Gradients) extracts edge and shape features from each image — far more informative for localization than raw pixels
+- PCA reduces HOG features to a compact representation before the model
+- ExtraTreesRegressor predicts all 4 bounding box coordinates `(x, y, width, height)` simultaneously
 
 Why this model fits:
+- HOG captures spatial structure (edges, gradients) relevant to object position
+- ExtraTrees uses randomized splits — better generalization and less overfitting than standard Random Forest
 - natively supports multi-output regression — one model, four outputs
-- no feature scaling required
-- PCA keeps memory and training time manageable
 
 ---
 
@@ -77,13 +78,13 @@ This supports reproducible experiments and controlled comparisons.
 
 ### Traditional ML Contribution
 
-Hyperparameters searched using `RandomizedSearchCV` (20 combinations, 3-fold CV, scored by mean IoU):
-- `pca__n_components`: [100, 200, 300]
-- `rf__n_estimators`: [100, 200, 300]
-- `rf__max_depth`: [None, 10, 20, 30]
-- `rf__min_samples_leaf`: [1, 2, 4]
+Hyperparameters searched using `GridSearchCV` (8 combinations × 5-fold CV = 40 total fits, scored by mean IoU):
+- `pca__n_components`: [100, 200]
+- `et__n_estimators`: [200]
+- `et__min_samples_leaf`: [1, 4]
+- `et__max_depth`: [None, 20]
 
-Best values found: `n_components=100`, `n_estimators=200`, `max_depth=None`, `min_samples_leaf=2`
+Best values found: `n_components=200`, `n_estimators=200`, `max_depth=None`, `min_samples_leaf=1`
 
 ---
 
@@ -148,11 +149,11 @@ How I monitor:
 - large gap (low train, high test) indicates overfitting
 - both poor indicates underfitting
 
-Results: train IoU 0.588 vs test IoU 0.373 — overfitting from `max_depth=None` allowing fully grown trees
+Results: train IoU 1.000 vs test IoU 0.392 — ExtraTrees with `max_depth=None` grows trees until each leaf has one sample, perfectly fitting the training set. Cross-validation confirmed that constraining the model (`max_depth=20`, `min_samples_leaf=4`) lowered validation IoU, so the unconstrained model is retained. Test IoU is the reliable performance indicator.
 
-Mitigation options:
-- limit `max_depth`
-- increase `min_samples_leaf`
+Mitigation options tested:
+- `max_depth=20` — reduced train fit but also reduced CV IoU
+- `min_samples_leaf=4` — same outcome; CV preferred the unconstrained model
 
 ---
 
@@ -189,15 +190,16 @@ Code is in [machine_learning/random_forest.ipynb](../machine_learning/random_for
 What the notebook does:
 - loads `preprocessed_data\images.npy` and `preprocessed_data\bboxes.npy`
 - uses fixed split indices from `preprocessed_data\train_indices.npy` and `preprocessed_data\test_indices.npy`
-- applies PCA + Random Forest in a sklearn `Pipeline` to prevent data leakage during cross-validation
-- runs `RandomizedSearchCV` (20 combinations, 3-fold CV, scored by mean IoU)
+- extracts HOG features from each image (orientations=8, pixels_per_cell=16×16, cells_per_block=2×2)
+- applies PCA + ExtraTreesRegressor in a sklearn `Pipeline` to prevent data leakage during cross-validation
+- runs `GridSearchCV` (8 combinations × 5-fold CV = 40 fits, scored by mean IoU)
 - reports MSE and IoU on train and test sets with a sample visualization
 - saves trained pipeline to `machine_learning\models\random_forest_pipeline.joblib`
-- exports predictions to `machine_learning\models\predictions.xml`
+- exports train and test predictions to `eval\predictions\random_forest\train.xml` and `eval\predictions\random_forest\test.xml`
 
-Best hyperparameters found: `n_components=100`, `n_estimators=200`, `max_depth=None`, `min_samples_leaf=2`
+Best hyperparameters found: `n_components=200`, `n_estimators=200`, `max_depth=None`, `min_samples_leaf=1`
 
 | Split | MSE | IoU |
 |-------|-----|-----|
-| Train | 258.76 | 0.588 |
-| Test | 1130.66 | 0.373 |
+| Train | 0.02 | 1.000 |
+| Test | 1031.74 | 0.392 |
