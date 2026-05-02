@@ -314,6 +314,25 @@ def build_report_dir(output_dir: Path, test_predictions_path: Path) -> Path:
     return run_dir
 
 
+def resolve_output_dir(user_output_dir: str | None) -> Path:
+    """
+    Always save reports under eval/results.
+    If a legacy model_eval_database path is passed, map it to eval/results.
+    """
+    if not user_output_dir:
+        return DEFAULT_OUTPUT_DIR
+
+    requested = Path(user_output_dir)
+    if requested.name == "model_eval_database":
+        return THIS_DIR / "results"
+    if "model_eval_database" in requested.parts:
+        parts = list(requested.parts)
+        idx = parts.index("model_eval_database")
+        remapped = Path(*parts[:idx], "results", *parts[idx + 1 :])
+        return remapped
+    return requested
+
+
 # ---------------------------------------------------------------------------
 # Reporting
 # ---------------------------------------------------------------------------
@@ -441,7 +460,7 @@ def main() -> None:
     parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR), help="Directory to save report files.")
     args = parser.parse_args()
 
-    output_dir = Path(args.output_dir)
+    output_dir = resolve_output_dir(args.output_dir)
     images_npy = Path(args.images_npy)
     test_predictions_path = Path(args.test_predictions)
     report_dir = build_report_dir(output_dir, test_predictions_path)
