@@ -1,8 +1,8 @@
 images_npy: preprocessed_data/images.npy
-checkpoint: deep_learning/checkpoints/best/best_model.pt
+checkpoint: deep_learning/checkpoints/best/best.pt
 
 # split must be a .npy array of dataset indices.
-split: preprocessed_data/train_indices.npy
+split: preprocessed_data/test_indices.npy
 
 image_size: 224
 
@@ -12,4 +12,4 @@ device: auto
 output_dir: eval/predictions/resnet_18
 output_root: eval/predictions/resnet_18
 # Output filename will be <run_name>.xml; empty uses timestamp.
-run_name: train
+run_name: test
