@@ -23,6 +23,8 @@ The project pipeline is:
 
 Flowchart artifact: `docs/ML_Final_Flowchart.jpg`.
 
+![Project Pipeline Flowchart](ML_Final_Flowchart.jpg)
+
 ### 2. Data Acquisition and Processing
 Data processing is implemented in `data_preprocessing/preprocess_dataset.ipynb` (and utility script `data_preprocessing/preprocess_local_dataset.py`).
 
