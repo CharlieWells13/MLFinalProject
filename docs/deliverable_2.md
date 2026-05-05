@@ -195,7 +195,7 @@ What the notebook does:
 - runs `GridSearchCV` (8 combinations × 5-fold CV = 40 fits, scored by mean IoU)
 - reports MSE and IoU on train and test sets with a sample visualization
 - saves trained pipeline to `machine_learning\models\random_forest_pipeline.joblib`
-- exports predictions to `machine_learning\models\predictions.xml`
+- exports train and test predictions to `eval\predictions\random_forest\train.xml` and `eval\predictions\random_forest\test.xml`
 
 Best hyperparameters found: `n_components=200`, `n_estimators=200`, `max_depth=None`, `min_samples_leaf=1`
 
