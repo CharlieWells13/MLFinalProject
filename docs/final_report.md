@@ -3,7 +3,7 @@
 **Authors:** Charlie Wells, Gihwan (Finn) Jung, Aleksandre Khvadagadze
 
 ## Abstract
-This project builds an end-to-end machine learning pipeline for object localization on pet images. The task is to predict bounding boxes for a single object in each image. We implemented and compared two approaches: (1) a deep learning ResNet-18 localization regressor and (2) a traditional machine learning baseline using PCA + ExtraTreesRegressor. The workflow includes data acquisition and preprocessing, exploratory analysis, model training, prediction export, and IoU-based evaluation. Final results show the deep learning model substantially outperforms the tree-ensemble baseline on held-out test data (test mean IoU 0.750 vs 0.354).
+This project builds an end-to-end machine learning pipeline for object localization on pet images. The task is to predict bounding boxes for a single object in each image. We implemented and compared two approaches: (1) a deep learning ResNet-18 localization regressor and (2) a traditional machine learning baseline using HOG feature extraction, PCA dimensionality reduction, and an ExtraTreesRegressor. The workflow includes data acquisition and preprocessing, exploratory analysis, model training, prediction export, and IoU-based evaluation. Final results show the deep learning model substantially outperforms the traditional ML baseline on held-out test data (test mean IoU 0.750 vs 0.392).
 
 ## Introduction
 Object localization is a core computer vision problem with applications in robotics, autonomous systems, medical imaging, and intelligent content analysis. Unlike image classification, localization requires predicting precise spatial coordinates (bounding boxes), which introduces both representation and evaluation challenges.
@@ -67,7 +67,7 @@ EDA-focused checks used in this project include:
 ### 4. Features and Outputs
 Input features:
 - Pixel intensities from resized RGB images (224x224x3).
-- For random forest, images are flattened and reduced via PCA.
+- For the traditional ML model, HOG (Histogram of Oriented Gradients) features are extracted from each image, then reduced via PCA before being passed to the model.
 
 Output target:
 - Bounding box regression target in `(x, y, width, height)` for IoU evaluation.
@@ -93,15 +93,16 @@ ResNet-18 architecture used in this project:
 
 ![ResNet-18 Architecture Diagram](resnet_18_architecture.png)
 
-#### Traditional ML: PCA + ExtraTreesRegressor
+#### Traditional ML: HOG + PCA + ExtraTreesRegressor
 Implemented in:
 - exploratory notebook: `machine_learning/random_forest.ipynb`
 - runnable prediction script: `machine_learning/random_forest.py`
 
 Approach:
-- Flatten image vectors.
-- PCA dimensionality reduction.
-- Multi-output ExtraTreesRegressor predicts 4 box coordinates.
+- Extract HOG (Histogram of Oriented Gradients) features from each image (orientations=8, pixels_per_cell=16×16, cells_per_block=2×2), producing ~5,408 features per image. HOG captures edge and shape structure — far more informative for localization than raw pixels.
+- PCA reduces HOG features to a compact representation (200 components), removing redundancy and speeding up training.
+- ExtraTreesRegressor predicts all 4 bounding box coordinates (x, y, width, height) simultaneously. ExtraTrees uses fully randomized split thresholds, which generalizes better than standard Random Forest and natively supports multi-output regression.
+- PCA and ExtraTreesRegressor are wrapped in a sklearn Pipeline to prevent data leakage during cross-validation.
 
 ### 6. Model Selection / Hyperparameter Tuning
 Both model families used cross-validation-aware model selection.
@@ -118,15 +119,15 @@ Deep learning selection (`deep_learning/train/train.py`):
   - Best fold/epoch/loss: fold 1, epoch 17, val loss 0.207068
   - CV mean best val loss: 0.212002
 
-Traditional ML (PCA + ExtraTrees) selection:
-- Hyperparameter search was performed with randomized search and cross-validation in the random forest workflow.
+Traditional ML (HOG + PCA + ExtraTrees) selection:
+- Hyperparameter search was performed with GridSearchCV (8 combinations × 5-fold CV = 40 total fits), scored by mean IoU.
 - Search space:
-  - `pca__n_components`: [100, 200, 300]
-  - `rf__n_estimators`: [100, 200, 300]
-  - `rf__max_depth`: [None, 10, 20, 30]
-  - `rf__min_samples_leaf`: [1, 2, 4]
-- Cross-validation: 3-fold, IoU-based scoring.
-- Selected baseline setting: `pca=100`, `n_estimators=200`, `max_depth=None`, `min_samples_leaf=2`.
+  - `pca__n_components`: [100, 200]
+  - `et__n_estimators`: [200]
+  - `et__max_depth`: [None, 20]
+  - `et__min_samples_leaf`: [1, 4]
+- Cross-validation: 5-fold, IoU-based scoring.
+- Best hyperparameters found: `pca__n_components=200`, `n_estimators=200`, `max_depth=None`, `min_samples_leaf=1`.
 
 ### 7. Evaluation Protocol
 Unified evaluator: `eval/evaluate_model.py`
@@ -149,17 +150,18 @@ Evaluated on `preprocessed_data/bboxes.npy` using:
 |---|---:|---:|---:|---:|---:|---:|
 | Deep Learning (ResNet-18) | Train | 2580 | 0.793 | 0.821 | 97.6% | 74.0% |
 | Deep Learning (ResNet-18) | Test | 738 | 0.750 | 0.777 | 95.7% | 58.9% |
-| Extra Trees (PCA+ET) | Train | 2580 | 0.321 | 0.240 | 19.4% | 11.2% |
-| Extra Trees (PCA+ET) | Test | 738 | 0.354 | 0.357 | 22.6% | 1.5% |
+| ExtraTrees (HOG+PCA+ET) | Train | 2580 | 1.000 | 1.000 | 100.0% | 100.0% |
+| ExtraTrees (HOG+PCA+ET) | Test | 738 | 0.392 | 0.400 | 32.4% | 3.5% |
 
 ### 2. Discussion
 Key findings:
-- ResNet-18 strongly outperforms the Extra Trees baseline on both train and test splits.
+- ResNet-18 strongly outperforms the ExtraTrees baseline on test data (0.750 vs 0.392 mean IoU).
 - Deep model generalization gap is modest (0.793 train mean IoU -> 0.750 test mean IoU).
-- Extra Trees remains substantially weaker than deep learning, with especially low high-IoU success on test (IoU>=0.75: 1.5%).
+- The ExtraTrees model achieves a train IoU of 1.000, indicating it memorizes the training set when grown without depth constraints (`max_depth=None`). This is expected behavior — ExtraTrees grows trees until each leaf has one sample. Constraining the model via `max_depth=20` or `min_samples_leaf=4` was tested but cross-validation consistently preferred the unconstrained model, so it was retained. Test IoU of 0.392 is the reliable performance indicator.
+- ExtraTrees with HOG features remains substantially weaker than deep learning, with especially low high-IoU success on test (IoU>=0.75: 3.5%).
 
 Interpretation:
-- Convolutional representations are better suited than flattened + PCA features for spatial localization.
+- Convolutional representations are better suited than HOG + PCA features for spatial localization.
 - Tree ensembles can model coarse structure but struggle to preserve the geometric detail required for high-IoU localization.
 
 Best deep learning fold training curve:
@@ -198,12 +200,12 @@ Traditional ML IoU distribution:
 Team contributions were distributed across the full pipeline:
 - **Gihwan (Finn) Jung:** preprocessing pipeline design/implementation, evaluation tooling integration, end-to-end run orchestration, report/evidence integration.
 - **Charlie Wells:** deep learning architecture/training pipeline implementation (ResNet-based regressor, config-driven training, checkpointing), prediction/export workflow.
-- **Aleksandre Khvadagadze:** traditional ML baseline (PCA + Extra Trees), hyperparameter tuning with cross-validation, baseline analysis and comparative discussion.
+- **Aleksandre Khvadagadze:** traditional ML baseline (HOG feature extraction, PCA, ExtraTreesRegressor), hyperparameter tuning with GridSearchCV (5-fold CV), baseline analysis and comparative discussion.
 
 All members contributed to debugging, experiment iteration, and deliverable preparation.
 
 ## Conclusion
-This project delivered a complete object-localization pipeline from annotation parsing through model evaluation. Under a shared preprocessing and IoU-based evaluation protocol, the deep learning ResNet-18 regressor outperformed the traditional PCA + Extra Trees baseline by a wide margin on held-out test data. The comparison highlights that convolutional feature learning is substantially more effective than handcrafted flattened-feature pipelines for precise spatial localization, while also reinforcing the importance of reproducible splits, consistent target formatting, and unified evaluation tooling in end-to-end ML projects.
+This project delivered a complete object-localization pipeline from annotation parsing through model evaluation. Under a shared preprocessing and IoU-based evaluation protocol, the deep learning ResNet-18 regressor outperformed the traditional HOG + PCA + ExtraTrees baseline by a wide margin on held-out test data. The comparison highlights that convolutional feature learning is substantially more effective than handcrafted HOG-based pipelines for precise spatial localization, while also reinforcing the importance of reproducible splits, consistent target formatting, and unified evaluation tooling in end-to-end ML projects.
 
 ## Course Summary
 This project consolidated core course concepts into a single applied pipeline:
