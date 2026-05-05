@@ -9,7 +9,6 @@ __pycache__/
 *.py[cod]
 
 # Model weights & serialized models
-*.pt
 *.pth
 *.joblib
 machine_learning/models/
@@ -29,8 +28,7 @@ deep_learning/predict/runs/
 .DS_Store
 
 # Eval database — only the index is tracked, not individual report files
-model_evaluation/model_eval_database/*.json
-model_evaluation/model_eval_database/*/
+eval/model_eval_database
 
 # Intentionally tracked (do not add rules that would catch these):
 #   model_evaluation/model_eval_database/reports_index.md — eval summary

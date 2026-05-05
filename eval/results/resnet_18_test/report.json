@@ -1,0 +1,2985 @@
+{
+  "report_timestamp": "20260505_121554",
+  "report_timestamp_human": "2026-05-05 12:15:54",
+  "metadata": {
+    "model": "deep_learning_model",
+    "source_file": "eval\\predictions\\resnet_18\\test.xml",
+    "prediction_timestamp": "2026-05-02T16:02:20",
+    "hardware": {
+      "platform": "Windows",
+      "os_version": "10",
+      "machine": "AMD64",
+      "processor": "AMD64 Family 25 Model 117 Stepping 2, AuthenticAMD"
+    }
+  },
+  "test_metrics": {
+    "n_evaluated": 738,
+    "mean_iou": 0.7502351372036489,
+    "median_iou": 0.7766820573659485,
+    "std_iou": 0.13839342101695437,
+    "min_iou": 0.0,
+    "max_iou": 0.9746903116947134,
+    "iou_at_25": 0.986449864498645,
+    "iou_at_50": 0.9566395663956639,
+    "iou_at_75": 0.5894308943089431,
+    "iou_at_90": 0.06910569105691057
+  },
+  "test_per_image": [
+    {
+      "dataset_index": 911,
+      "iou": 0.883096
+    },
+    {
+      "dataset_index": 2061,
+      "iou": 0.861919
+    },
+    {
+      "dataset_index": 1274,
+      "iou": 0.858831
+    },
+    {
+      "dataset_index": 2669,
+      "iou": 0.876275
+    },
+    {
+      "dataset_index": 2330,
+      "iou": 0.585964
+    },
+    {
+      "dataset_index": 558,
+      "iou": 0.907496
+    },
+    {
+      "dataset_index": 1813,
+      "iou": 0.64495
+    },
+    {
+      "dataset_index": 1848,
+      "iou": 0.745348
+    },
+    {
+      "dataset_index": 2624,
+      "iou": 0.562445
+    },
+    {
+      "dataset_index": 2369,
+      "iou": 0.750148
+    },
+    {
+      "dataset_index": 72,
+      "iou": 0.876649
+    },
+    {
+      "dataset_index": 3462,
+      "iou": 0.852129
+    },
+    {
+      "dataset_index": 3313,
+      "iou": 0.663132
+    },
+    {
+      "dataset_index": 2758,
+      "iou": 0.687541
+    },
+    {
+      "dataset_index": 1678,
+      "iou": 0.571733
+    },
+    {
+      "dataset_index": 2822,
+      "iou": 0.829635
+    },
+    {
+      "dataset_index": 525,
+      "iou": 0.704878
+    },
+    {
+      "dataset_index": 1988,
+      "iou": 0.735704
+    },
+    {
+      "dataset_index": 624,
+      "iou": 0.256759
+    },
+    {
+      "dataset_index": 2133,
+      "iou": 0.728542
+    },
+    {
+      "dataset_index": 3615,
+      "iou": 0.743656
+    },
+    {
+      "dataset_index": 1053,
+      "iou": 0.642753
+    },
+    {
+      "dataset_index": 971,
+      "iou": 0.913157
+    },
+    {
+      "dataset_index": 490,
+      "iou": 0.844333
+    },
+    {
+      "dataset_index": 3427,
+      "iou": 0.867171
+    },
+    {
+      "dataset_index": 2605,
+      "iou": 0.760562
+    },
+    {
+      "dataset_index": 3013,
+      "iou": 0.870431
+    },
+    {
+      "dataset_index": 983,
+      "iou": 0.878488
+    },
+    {
+      "dataset_index": 2475,
+      "iou": 0.672827
+    },
+    {
+      "dataset_index": 2033,
+      "iou": 0.541865
+    },
+    {
+      "dataset_index": 1695,
+      "iou": 0.499922
+    },
+    {
+      "dataset_index": 1404,
+      "iou": 0.587336
+    },
+    {
+      "dataset_index": 2389,
+      "iou": 0.84674
+    },
+    {
+      "dataset_index": 1773,
+      "iou": 0.672246
+    },
+    {
+      "dataset_index": 571,
+      "iou": 0.835871
+    },
+    {
+      "dataset_index": 751,
+      "iou": 0.385285
+    },
+    {
+      "dataset_index": 662,
+      "iou": 0.863843
+    },
+    {
+      "dataset_index": 2897,
+      "iou": 0.766637
+    },
+    {
+      "dataset_index": 1383,
+      "iou": 0.5699
+    },
+    {
+      "dataset_index": 3124,
+      "iou": 0.91503
+    },
+    {
+      "dataset_index": 3402,
+      "iou": 0.822808
+    },
+    {
+      "dataset_index": 2530,
+      "iou": 0.632567
+    },
+    {
+      "dataset_index": 184,
+      "iou": 0.749877
+    },
+    {
+      "dataset_index": 319,
+      "iou": 0.756772
+    },
+    {
+      "dataset_index": 212,
+      "iou": 0.83941
+    },
+    {
+      "dataset_index": 3552,
+      "iou": 0.715385
+    },
+    {
+      "dataset_index": 2750,
+      "iou": 0.795875
+    },
+    {
+      "dataset_index": 1793,
+      "iou": 0.693585
+    },
+    {
+      "dataset_index": 2052,
+      "iou": 0.834489
+    },
+    {
+      "dataset_index": 1664,
+      "iou": 0.509736
+    },
+    {
+      "dataset_index": 2589,
+      "iou": 0.97469
+    },
+    {
+      "dataset_index": 3547,
+      "iou": 0.697894
+    },
+    {
+      "dataset_index": 2633,
+      "iou": 0.0
+    },
+    {
+      "dataset_index": 2194,
+      "iou": 0.707591
+    },
+    {
+      "dataset_index": 3268,
+      "iou": 0.792611
+    },
+    {
+      "dataset_index": 1397,
+      "iou": 0.712453
+    },
+    {
+      "dataset_index": 3458,
+      "iou": 0.771941
+    },
+    {
+      "dataset_index": 1255,
+      "iou": 0.927279
+    },
+    {
+      "dataset_index": 830,
+      "iou": 0.831421
+    },
+    {
+      "dataset_index": 3197,
+      "iou": 0.780473
+    },
+    {
+      "dataset_index": 1704,
+      "iou": 0.812584
+    },
+    {
+      "dataset_index": 3299,
+      "iou": 0.82759
+    },
+    {
+      "dataset_index": 454,
+      "iou": 0.567125
+    },
+    {
+      "dataset_index": 3095,
+      "iou": 0.838363
+    },
+    {
+      "dataset_index": 3434,
+      "iou": 0.89572
+    },
+    {
+      "dataset_index": 284,
+      "iou": 0.626813
+    },
+    {
+      "dataset_index": 101,
+      "iou": 0.705495
+    },
+    {
+      "dataset_index": 1748,
+      "iou": 0.921512
+    },
+    {
+      "dataset_index": 526,
+      "iou": 0.83663
+    },
+    {
+      "dataset_index": 1587,
+      "iou": 0.867328
+    },
+    {
+      "dataset_index": 1859,
+      "iou": 0.771334
+    },
+    {
+      "dataset_index": 3666,
+      "iou": 0.938705
+    },
+    {
+      "dataset_index": 682,
+      "iou": 0.855315
+    },
+    {
+      "dataset_index": 1096,
+      "iou": 0.917416
+    },
+    {
+      "dataset_index": 1279,
+      "iou": 0.38119
+    },
+    {
+      "dataset_index": 1038,
+      "iou": 0.859405
+    },
+    {
+      "dataset_index": 2100,
+      "iou": 0.687344
+    },
+    {
+      "dataset_index": 2963,
+      "iou": 0.854066
+    },
+    {
+      "dataset_index": 2360,
+      "iou": 0.842777
+    },
+    {
+      "dataset_index": 2279,
+      "iou": 0.832202
+    },
+    {
+      "dataset_index": 3640,
+      "iou": 0.824125
+    },
+    {
+      "dataset_index": 2579,
+      "iou": 0.846554
+    },
+    {
+      "dataset_index": 886,
+      "iou": 0.741107
+    },
+    {
+      "dataset_index": 3358,
+      "iou": 0.916689
+    },
+    {
+      "dataset_index": 1600,
+      "iou": 0.772215
+    },
+    {
+      "dataset_index": 1947,
+      "iou": 0.712418
+    },
+    {
+      "dataset_index": 2265,
+      "iou": 0.810337
+    },
+    {
+      "dataset_index": 345,
+      "iou": 0.689449
+    },
+    {
+      "dataset_index": 397,
+      "iou": 0.768553
+    },
+    {
+      "dataset_index": 1801,
+      "iou": 0.73055
+    },
+    {
+      "dataset_index": 1313,
+      "iou": 0.829661
+    },
+    {
+      "dataset_index": 1005,
+      "iou": 0.839686
+    },
+    {
+      "dataset_index": 2630,
+      "iou": 0.800268
+    },
+    {
+      "dataset_index": 1721,
+      "iou": 0.649103
+    },
+    {
+      "dataset_index": 1796,
+      "iou": 0.681935
+    },
+    {
+      "dataset_index": 3453,
+      "iou": 0.791245
+    },
+    {
+      "dataset_index": 2385,
+      "iou": 0.746586
+    },
+    {
+      "dataset_index": 320,
+      "iou": 0.72195
+    },
+    {
+      "dataset_index": 2946,
+      "iou": 0.827817
+    },
+    {
+      "dataset_index": 2690,
+      "iou": 0.677598
+    },
+    {
+      "dataset_index": 2507,
+      "iou": 0.835016
+    },
+    {
+      "dataset_index": 2032,
+      "iou": 0.803015
+    },
+    {
+      "dataset_index": 714,
+      "iou": 0.54578
+    },
+    {
+      "dataset_index": 1403,
+      "iou": 0.747726
+    },
+    {
+      "dataset_index": 2993,
+      "iou": 0.74635
+    },
+    {
+      "dataset_index": 2162,
+      "iou": 0.36962
+    },
+    {
+      "dataset_index": 2803,
+      "iou": 0.764321
+    },
+    {
+      "dataset_index": 1405,
+      "iou": 0.805032
+    },
+    {
+      "dataset_index": 2169,
+      "iou": 0.631049
+    },
+    {
+      "dataset_index": 1167,
+      "iou": 0.868375
+    },
+    {
+      "dataset_index": 1219,
+      "iou": 0.680368
+    },
+    {
+      "dataset_index": 2205,
+      "iou": 0.860386
+    },
+    {
+      "dataset_index": 1426,
+      "iou": 0.733572
+    },
+    {
+      "dataset_index": 1459,
+      "iou": 0.010201
+    },
+    {
+      "dataset_index": 1387,
+      "iou": 0.694745
+    },
+    {
+      "dataset_index": 3205,
+      "iou": 0.823145
+    },
+    {
+      "dataset_index": 2077,
+      "iou": 0.781192
+    },
+    {
+      "dataset_index": 342,
+      "iou": 0.891464
+    },
+    {
+      "dataset_index": 2131,
+      "iou": 0.723857
+    },
+    {
+      "dataset_index": 1133,
+      "iou": 0.806617
+    },
+    {
+      "dataset_index": 3557,
+      "iou": 0.407775
+    },
+    {
+      "dataset_index": 383,
+      "iou": 0.796804
+    },
+    {
+      "dataset_index": 3224,
+      "iou": 0.845519
+    },
+    {
+      "dataset_index": 2495,
+      "iou": 0.834237
+    },
+    {
+      "dataset_index": 1446,
+      "iou": 0.657372
+    },
+    {
+      "dataset_index": 2575,
+      "iou": 0.833419
+    },
+    {
+      "dataset_index": 533,
+      "iou": 0.630047
+    },
+    {
+      "dataset_index": 422,
+      "iou": 0.838531
+    },
+    {
+      "dataset_index": 163,
+      "iou": 0.520261
+    },
+    {
+      "dataset_index": 2301,
+      "iou": 0.951942
+    },
+    {
+      "dataset_index": 46,
+      "iou": 0.835231
+    },
+    {
+      "dataset_index": 1618,
+      "iou": 0.628838
+    },
+    {
+      "dataset_index": 665,
+      "iou": 0.918554
+    },
+    {
+      "dataset_index": 2871,
+      "iou": 0.73327
+    },
+    {
+      "dataset_index": 2573,
+      "iou": 0.74574
+    },
+    {
+      "dataset_index": 3652,
+      "iou": 0.711755
+    },
+    {
+      "dataset_index": 321,
+      "iou": 0.799494
+    },
+    {
+      "dataset_index": 2476,
+      "iou": 0.854393
+    },
+    {
+      "dataset_index": 773,
+      "iou": 0.889921
+    },
+    {
+      "dataset_index": 14,
+      "iou": 0.922847
+    },
+    {
+      "dataset_index": 743,
+      "iou": 0.513538
+    },
+    {
+      "dataset_index": 2774,
+      "iou": 0.842669
+    },
+    {
+      "dataset_index": 313,
+      "iou": 0.760002
+    },
+    {
+      "dataset_index": 1870,
+      "iou": 0.710866
+    },
+    {
+      "dataset_index": 1282,
+      "iou": 0.610855
+    },
+    {
+      "dataset_index": 1142,
+      "iou": 0.730157
+    },
+    {
+      "dataset_index": 248,
+      "iou": 0.607031
+    },
+    {
+      "dataset_index": 294,
+      "iou": 0.775085
+    },
+    {
+      "dataset_index": 3414,
+      "iou": 0.707092
+    },
+    {
+      "dataset_index": 2980,
+      "iou": 0.93299
+    },
+    {
+      "dataset_index": 3182,
+      "iou": 0.806742
+    },
+    {
+      "dataset_index": 3508,
+      "iou": 0.812218
+    },
+    {
+      "dataset_index": 2564,
+      "iou": 0.819987
+    },
+    {
+      "dataset_index": 1981,
+      "iou": 0.878546
+    },
+    {
+      "dataset_index": 3154,
+      "iou": 0.560005
+    },
+    {
+      "dataset_index": 2080,
+      "iou": 0.0
+    },
+    {
+      "dataset_index": 3287,
+      "iou": 0.83921
+    },
+    {
+      "dataset_index": 2777,
+      "iou": 0.788003
+    },
+    {
+      "dataset_index": 3199,
+      "iou": 0.55614
+    },
+    {
+      "dataset_index": 613,
+      "iou": 0.686247
+    },
+    {
+      "dataset_index": 3674,
+      "iou": 0.721546
+    },
+    {
+      "dataset_index": 1702,
+      "iou": 0.666213
+    },
+    {
+      "dataset_index": 2179,
+      "iou": 0.867717
+    },
+    {
+      "dataset_index": 693,
+      "iou": 0.895042
+    },
+    {
+      "dataset_index": 1472,
+      "iou": 0.551739
+    },
+    {
+      "dataset_index": 1772,
+      "iou": 0.775049
+    },
+    {
+      "dataset_index": 121,
+      "iou": 0.648676
+    },
+    {
+      "dataset_index": 3444,
+      "iou": 0.83842
+    },
+    {
+      "dataset_index": 93,
+      "iou": 0.795918
+    },
+    {
+      "dataset_index": 3602,
+      "iou": 0.797756
+    },
+    {
+      "dataset_index": 2823,
+      "iou": 0.799537
+    },
+    {
+      "dataset_index": 2559,
+      "iou": 0.65753
+    },
+    {
+      "dataset_index": 3560,
+      "iou": 0.599326
+    },
+    {
+      "dataset_index": 650,
+      "iou": 0.612812
+    },
+    {
+      "dataset_index": 460,
+      "iou": 0.735752
+    },
+    {
+      "dataset_index": 1222,
+      "iou": 0.884225
+    },
+    {
+      "dataset_index": 2184,
+      "iou": 0.679502
+    },
+    {
+      "dataset_index": 3070,
+      "iou": 0.729747
+    },
+    {
+      "dataset_index": 946,
+      "iou": 0.880782
+    },
+    {
+      "dataset_index": 1269,
+      "iou": 0.808029
+    },
+    {
+      "dataset_index": 263,
+      "iou": 0.916141
+    },
+    {
+      "dataset_index": 197,
+      "iou": 0.646764
+    },
+    {
+      "dataset_index": 949,
+      "iou": 0.350249
+    },
+    {
+      "dataset_index": 627,
+      "iou": 0.657645
+    },
+    {
+      "dataset_index": 1092,
+      "iou": 0.790324
+    },
+    {
+      "dataset_index": 2017,
+      "iou": 0.772148
+    },
+    {
+      "dataset_index": 2992,
+      "iou": 0.760632
+    },
+    {
+      "dataset_index": 855,
+      "iou": 0.801148
+    },
+    {
+      "dataset_index": 784,
+      "iou": 0.828152
+    },
+    {
+      "dataset_index": 1908,
+      "iou": 0.505065
+    },
+    {
+      "dataset_index": 1647,
+      "iou": 0.705697
+    },
+    {
+      "dataset_index": 923,
+      "iou": 0.716898
+    },
+    {
+      "dataset_index": 2556,
+      "iou": 0.811804
+    },
+    {
+      "dataset_index": 951,
+      "iou": 0.669888
+    },
+    {
+      "dataset_index": 3612,
+      "iou": 0.71474
+    },
+    {
+      "dataset_index": 1722,
+      "iou": 0.623634
+    },
+    {
+      "dataset_index": 677,
+      "iou": 0.833721
+    },
+    {
+      "dataset_index": 199,
+      "iou": 0.905644
+    },
+    {
+      "dataset_index": 2418,
+      "iou": 0.837285
+    },
+    {
+      "dataset_index": 1478,
+      "iou": 0.742079
+    },
+    {
+      "dataset_index": 1619,
+      "iou": 0.544322
+    },
+    {
+      "dataset_index": 1931,
+      "iou": 0.628618
+    },
+    {
+      "dataset_index": 2357,
+      "iou": 0.881064
+    },
+    {
+      "dataset_index": 349,
+      "iou": 0.744026
+    },
+    {
+      "dataset_index": 1512,
+      "iou": 0.483505
+    },
+    {
+      "dataset_index": 953,
+      "iou": 0.772913
+    },
+    {
+      "dataset_index": 2950,
+      "iou": 0.794245
+    },
+    {
+      "dataset_index": 2860,
+      "iou": 0.601862
+    },
+    {
+      "dataset_index": 1254,
+      "iou": 0.76527
+    },
+    {
+      "dataset_index": 2626,
+      "iou": 0.766855
+    },
+    {
+      "dataset_index": 161,
+      "iou": 0.900222
+    },
+    {
+      "dataset_index": 3411,
+      "iou": 0.864831
+    },
+    {
+      "dataset_index": 1498,
+      "iou": 0.757017
+    },
+    {
+      "dataset_index": 991,
+      "iou": 0.794576
+    },
+    {
+      "dataset_index": 3400,
+      "iou": 0.815297
+    },
+    {
+      "dataset_index": 388,
+      "iou": 0.194585
+    },
+    {
+      "dataset_index": 3012,
+      "iou": 0.842115
+    },
+    {
+      "dataset_index": 2268,
+      "iou": 0.649692
+    },
+    {
+      "dataset_index": 943,
+      "iou": 0.958662
+    },
+    {
+      "dataset_index": 3567,
+      "iou": 0.720073
+    },
+    {
+      "dataset_index": 644,
+      "iou": 0.698094
+    },
+    {
+      "dataset_index": 2747,
+      "iou": 0.853095
+    },
+    {
+      "dataset_index": 2783,
+      "iou": 0.707015
+    },
+    {
+      "dataset_index": 711,
+      "iou": 0.746919
+    },
+    {
+      "dataset_index": 207,
+      "iou": 0.840709
+    },
+    {
+      "dataset_index": 266,
+      "iou": 0.889072
+    },
+    {
+      "dataset_index": 2600,
+      "iou": 0.853708
+    },
+    {
+      "dataset_index": 293,
+      "iou": 0.868396
+    },
+    {
+      "dataset_index": 1895,
+      "iou": 0.751141
+    },
+    {
+      "dataset_index": 1953,
+      "iou": 0.826918
+    },
+    {
+      "dataset_index": 1341,
+      "iou": 0.773486
+    },
+    {
+      "dataset_index": 2394,
+      "iou": 0.749004
+    },
+    {
+      "dataset_index": 809,
+      "iou": 0.77556
+    },
+    {
+      "dataset_index": 3250,
+      "iou": 0.777248
+    },
+    {
+      "dataset_index": 646,
+      "iou": 0.675815
+    },
+    {
+      "dataset_index": 1344,
+      "iou": 0.831512
+    },
+    {
+      "dataset_index": 1087,
+      "iou": 0.776489
+    },
+    {
+      "dataset_index": 1275,
+      "iou": 0.839104
+    },
+    {
+      "dataset_index": 2025,
+      "iou": 0.45267
+    },
+    {
+      "dataset_index": 269,
+      "iou": 0.790445
+    },
+    {
+      "dataset_index": 1233,
+      "iou": 0.798211
+    },
+    {
+      "dataset_index": 2843,
+      "iou": 0.879538
+    },
+    {
+      "dataset_index": 3650,
+      "iou": 0.724835
+    },
+    {
+      "dataset_index": 2707,
+      "iou": 0.736212
+    },
+    {
+      "dataset_index": 1558,
+      "iou": 0.327047
+    },
+    {
+      "dataset_index": 3263,
+      "iou": 0.849432
+    },
+    {
+      "dataset_index": 3,
+      "iou": 0.879844
+    },
+    {
+      "dataset_index": 1471,
+      "iou": 0.666998
+    },
+    {
+      "dataset_index": 486,
+      "iou": 0.912661
+    },
+    {
+      "dataset_index": 3126,
+      "iou": 0.573287
+    },
+    {
+      "dataset_index": 2885,
+      "iou": 0.713592
+    },
+    {
+      "dataset_index": 1575,
+      "iou": 0.541841
+    },
+    {
+      "dataset_index": 3548,
+      "iou": 0.511559
+    },
+    {
+      "dataset_index": 1924,
+      "iou": 0.543694
+    },
+    {
+      "dataset_index": 1333,
+      "iou": 0.656621
+    },
+    {
+      "dataset_index": 520,
+      "iou": 0.577547
+    },
+    {
+      "dataset_index": 2439,
+      "iou": 0.823645
+    },
+    {
+      "dataset_index": 61,
+      "iou": 0.830725
+    },
+    {
+      "dataset_index": 804,
+      "iou": 0.854667
+    },
+    {
+      "dataset_index": 1179,
+      "iou": 0.917312
+    },
+    {
+      "dataset_index": 2784,
+      "iou": 0.721236
+    },
+    {
+      "dataset_index": 1484,
+      "iou": 0.836775
+    },
+    {
+      "dataset_index": 130,
+      "iou": 0.735609
+    },
+    {
+      "dataset_index": 3536,
+      "iou": 0.637518
+    },
+    {
+      "dataset_index": 1475,
+      "iou": 0.590397
+    },
+    {
+      "dataset_index": 2519,
+      "iou": 0.138421
+    },
+    {
+      "dataset_index": 2914,
+      "iou": 0.868293
+    },
+    {
+      "dataset_index": 1098,
+      "iou": 0.758372
+    },
+    {
+      "dataset_index": 3385,
+      "iou": 0.842155
+    },
+    {
+      "dataset_index": 1758,
+      "iou": 0.780532
+    },
+    {
+      "dataset_index": 2504,
+      "iou": 0.746754
+    },
+    {
+      "dataset_index": 2173,
+      "iou": 0.5882
+    },
+    {
+      "dataset_index": 2398,
+      "iou": 0.790801
+    },
+    {
+      "dataset_index": 2706,
+      "iou": 0.772726
+    },
+    {
+      "dataset_index": 1244,
+      "iou": 0.884085
+    },
+    {
+      "dataset_index": 458,
+      "iou": 0.925624
+    },
+    {
+      "dataset_index": 2229,
+      "iou": 0.701208
+    },
+    {
+      "dataset_index": 2599,
+      "iou": 0.896614
+    },
+    {
+      "dataset_index": 2485,
+      "iou": 0.740573
+    },
+    {
+      "dataset_index": 2966,
+      "iou": 0.694953
+    },
+    {
+      "dataset_index": 96,
+      "iou": 0.826346
+    },
+    {
+      "dataset_index": 1134,
+      "iou": 0.66797
+    },
+    {
+      "dataset_index": 1725,
+      "iou": 0.793834
+    },
+    {
+      "dataset_index": 1349,
+      "iou": 0.818518
+    },
+    {
+      "dataset_index": 655,
+      "iou": 0.776875
+    },
+    {
+      "dataset_index": 1224,
+      "iou": 0.823216
+    },
+    {
+      "dataset_index": 975,
+      "iou": 0.695295
+    },
+    {
+      "dataset_index": 1952,
+      "iou": 0.657931
+    },
+    {
+      "dataset_index": 1880,
+      "iou": 0.671337
+    },
+    {
+      "dataset_index": 329,
+      "iou": 0.770495
+    },
+    {
+      "dataset_index": 2244,
+      "iou": 0.890404
+    },
+    {
+      "dataset_index": 2106,
+      "iou": 0.926352
+    },
+    {
+      "dataset_index": 1270,
+      "iou": 0.79709
+    },
+    {
+      "dataset_index": 573,
+      "iou": 0.914641
+    },
+    {
+      "dataset_index": 444,
+      "iou": 0.883856
+    },
+    {
+      "dataset_index": 796,
+      "iou": 0.718225
+    },
+    {
+      "dataset_index": 2797,
+      "iou": 0.839291
+    },
+    {
+      "dataset_index": 3638,
+      "iou": 0.808116
+    },
+    {
+      "dataset_index": 3247,
+      "iou": 0.573519
+    },
+    {
+      "dataset_index": 1127,
+      "iou": 0.793241
+    },
+    {
+      "dataset_index": 2511,
+      "iou": 0.935366
+    },
+    {
+      "dataset_index": 3336,
+      "iou": 0.690676
+    },
+    {
+      "dataset_index": 2224,
+      "iou": 0.573541
+    },
+    {
+      "dataset_index": 3616,
+      "iou": 0.639214
+    },
+    {
+      "dataset_index": 1027,
+      "iou": 0.916266
+    },
+    {
+      "dataset_index": 2013,
+      "iou": 0.59859
+    },
+    {
+      "dataset_index": 1049,
+      "iou": 0.918014
+    },
+    {
+      "dataset_index": 3034,
+      "iou": 0.801168
+    },
+    {
+      "dataset_index": 102,
+      "iou": 0.803484
+    },
+    {
+      "dataset_index": 1626,
+      "iou": 0.870598
+    },
+    {
+      "dataset_index": 1902,
+      "iou": 0.775213
+    },
+    {
+      "dataset_index": 3678,
+      "iou": 0.701765
+    },
+    {
+      "dataset_index": 291,
+      "iou": 0.803282
+    },
+    {
+      "dataset_index": 1546,
+      "iou": 0.67918
+    },
+    {
+      "dataset_index": 2742,
+      "iou": 0.852534
+    },
+    {
+      "dataset_index": 721,
+      "iou": 0.593347
+    },
+    {
+      "dataset_index": 1029,
+      "iou": 0.784776
+    },
+    {
+      "dataset_index": 3325,
+      "iou": 0.899776
+    },
+    {
+      "dataset_index": 1567,
+      "iou": 0.777426
+    },
+    {
+      "dataset_index": 1528,
+      "iou": 0.898497
+    },
+    {
+      "dataset_index": 2547,
+      "iou": 0.88366
+    },
+    {
+      "dataset_index": 3624,
+      "iou": 0.707463
+    },
+    {
+      "dataset_index": 2322,
+      "iou": 0.587267
+    },
+    {
+      "dataset_index": 619,
+      "iou": 0.835145
+    },
+    {
+      "dataset_index": 1110,
+      "iou": 0.824566
+    },
+    {
+      "dataset_index": 863,
+      "iou": 0.753841
+    },
+    {
+      "dataset_index": 1165,
+      "iou": 0.850874
+    },
+    {
+      "dataset_index": 287,
+      "iou": 0.867517
+    },
+    {
+      "dataset_index": 2339,
+      "iou": 0.736289
+    },
+    {
+      "dataset_index": 1795,
+      "iou": 0.730795
+    },
+    {
+      "dataset_index": 3191,
+      "iou": 0.743923
+    },
+    {
+      "dataset_index": 2039,
+      "iou": 0.557415
+    },
+    {
+      "dataset_index": 125,
+      "iou": 0.805055
+    },
+    {
+      "dataset_index": 2925,
+      "iou": 0.793129
+    },
+    {
+      "dataset_index": 415,
+      "iou": 0.780125
+    },
+    {
+      "dataset_index": 2998,
+      "iou": 0.634168
+    },
+    {
+      "dataset_index": 20,
+      "iou": 0.622667
+    },
+    {
+      "dataset_index": 3671,
+      "iou": 0.721544
+    },
+    {
+      "dataset_index": 1419,
+      "iou": 0.786024
+    },
+    {
+      "dataset_index": 658,
+      "iou": 0.842719
+    },
+    {
+      "dataset_index": 3178,
+      "iou": 0.659747
+    },
+    {
+      "dataset_index": 2397,
+      "iou": 0.713558
+    },
+    {
+      "dataset_index": 1564,
+      "iou": 0.821111
+    },
+    {
+      "dataset_index": 3133,
+      "iou": 0.715376
+    },
+    {
+      "dataset_index": 1714,
+      "iou": 0.862531
+    },
+    {
+      "dataset_index": 2673,
+      "iou": 0.765482
+    },
+    {
+      "dataset_index": 3039,
+      "iou": 0.658932
+    },
+    {
+      "dataset_index": 509,
+      "iou": 0.806071
+    },
+    {
+      "dataset_index": 1705,
+      "iou": 0.769888
+    },
+    {
+      "dataset_index": 2421,
+      "iou": 0.678571
+    },
+    {
+      "dataset_index": 2912,
+      "iou": 0.864197
+    },
+    {
+      "dataset_index": 1733,
+      "iou": 0.892116
+    },
+    {
+      "dataset_index": 807,
+      "iou": 0.637553
+    },
+    {
+      "dataset_index": 3159,
+      "iou": 0.633891
+    },
+    {
+      "dataset_index": 1318,
+      "iou": 0.905808
+    },
+    {
+      "dataset_index": 1022,
+      "iou": 0.869098
+    },
+    {
+      "dataset_index": 1927,
+      "iou": 0.7173
+    },
+    {
+      "dataset_index": 2744,
+      "iou": 0.800203
+    },
+    {
+      "dataset_index": 2492,
+      "iou": 0.824556
+    },
+    {
+      "dataset_index": 315,
+      "iou": 0.42523
+    },
+    {
+      "dataset_index": 2443,
+      "iou": 0.668649
+    },
+    {
+      "dataset_index": 2099,
+      "iou": 0.758628
+    },
+    {
+      "dataset_index": 651,
+      "iou": 0.723091
+    },
+    {
+      "dataset_index": 1490,
+      "iou": 0.762645
+    },
+    {
+      "dataset_index": 2732,
+      "iou": 0.846781
+    },
+    {
+      "dataset_index": 1507,
+      "iou": 0.751129
+    },
+    {
+      "dataset_index": 564,
+      "iou": 0.842668
+    },
+    {
+      "dataset_index": 783,
+      "iou": 0.597456
+    },
+    {
+      "dataset_index": 676,
+      "iou": 0.736944
+    },
+    {
+      "dataset_index": 2198,
+      "iou": 0.678295
+    },
+    {
+      "dataset_index": 478,
+      "iou": 0.874035
+    },
+    {
+      "dataset_index": 3480,
+      "iou": 0.790025
+    },
+    {
+      "dataset_index": 2004,
+      "iou": 0.748842
+    },
+    {
+      "dataset_index": 942,
+      "iou": 0.824292
+    },
+    {
+      "dataset_index": 569,
+      "iou": 0.712651
+    },
+    {
+      "dataset_index": 774,
+      "iou": 0.744366
+    },
+    {
+      "dataset_index": 572,
+      "iou": 0.87018
+    },
+    {
+      "dataset_index": 384,
+      "iou": 0.854671
+    },
+    {
+      "dataset_index": 2704,
+      "iou": 0.682297
+    },
+    {
+      "dataset_index": 2034,
+      "iou": 0.829219
+    },
+    {
+      "dataset_index": 1102,
+      "iou": 0.753452
+    },
+    {
+      "dataset_index": 54,
+      "iou": 0.851201
+    },
+    {
+      "dataset_index": 3271,
+      "iou": 0.842877
+    },
+    {
+      "dataset_index": 2679,
+      "iou": 0.796965
+    },
+    {
+      "dataset_index": 1013,
+      "iou": 0.71608
+    },
+    {
+      "dataset_index": 3540,
+      "iou": 0.843474
+    },
+    {
+      "dataset_index": 737,
+      "iou": 0.79041
+    },
+    {
+      "dataset_index": 2391,
+      "iou": 0.721661
+    },
+    {
+      "dataset_index": 405,
+      "iou": 0.837469
+    },
+    {
+      "dataset_index": 3275,
+      "iou": 0.806904
+    },
+    {
+      "dataset_index": 359,
+      "iou": 0.7821
+    },
+    {
+      "dataset_index": 3145,
+      "iou": 0.805184
+    },
+    {
+      "dataset_index": 2828,
+      "iou": 0.849811
+    },
+    {
+      "dataset_index": 3403,
+      "iou": 0.764149
+    },
+    {
+      "dataset_index": 302,
+      "iou": 0.772636
+    },
+    {
+      "dataset_index": 232,
+      "iou": 0.911801
+    },
+    {
+      "dataset_index": 482,
+      "iou": 0.819475
+    },
+    {
+      "dataset_index": 927,
+      "iou": 0.843398
+    },
+    {
+      "dataset_index": 2166,
+      "iou": 0.661554
+    },
+    {
+      "dataset_index": 3114,
+      "iou": 0.81118
+    },
+    {
+      "dataset_index": 1915,
+      "iou": 0.555855
+    },
+    {
+      "dataset_index": 519,
+      "iou": 0.778481
+    },
+    {
+      "dataset_index": 2913,
+      "iou": 0.745124
+    },
+    {
+      "dataset_index": 1026,
+      "iou": 0.870745
+    },
+    {
+      "dataset_index": 3021,
+      "iou": 0.715685
+    },
+    {
+      "dataset_index": 3310,
+      "iou": 0.790721
+    },
+    {
+      "dataset_index": 127,
+      "iou": 0.579262
+    },
+    {
+      "dataset_index": 2883,
+      "iou": 0.794032
+    },
+    {
+      "dataset_index": 463,
+      "iou": 0.899088
+    },
+    {
+      "dataset_index": 3241,
+      "iou": 0.90034
+    },
+    {
+      "dataset_index": 1650,
+      "iou": 0.82063
+    },
+    {
+      "dataset_index": 2289,
+      "iou": 0.905495
+    },
+    {
+      "dataset_index": 3544,
+      "iou": 0.729929
+    },
+    {
+      "dataset_index": 1323,
+      "iou": 0.860638
+    },
+    {
+      "dataset_index": 2138,
+      "iou": 0.734824
+    },
+    {
+      "dataset_index": 1002,
+      "iou": 0.912168
+    },
+    {
+      "dataset_index": 1047,
+      "iou": 0.949066
+    },
+    {
+      "dataset_index": 340,
+      "iou": 0.773287
+    },
+    {
+      "dataset_index": 3084,
+      "iou": 0.778554
+    },
+    {
+      "dataset_index": 2228,
+      "iou": 0.728547
+    },
+    {
+      "dataset_index": 3367,
+      "iou": 0.710377
+    },
+    {
+      "dataset_index": 1965,
+      "iou": 0.72782
+    },
+    {
+      "dataset_index": 532,
+      "iou": 0.786146
+    },
+    {
+      "dataset_index": 1059,
+      "iou": 0.577562
+    },
+    {
+      "dataset_index": 3347,
+      "iou": 0.760265
+    },
+    {
+      "dataset_index": 870,
+      "iou": 0.769848
+    },
+    {
+      "dataset_index": 6,
+      "iou": 0.789161
+    },
+    {
+      "dataset_index": 1128,
+      "iou": 0.690174
+    },
+    {
+      "dataset_index": 3436,
+      "iou": 0.83928
+    },
+    {
+      "dataset_index": 2532,
+      "iou": 0.900839
+    },
+    {
+      "dataset_index": 3231,
+      "iou": 0.680669
+    },
+    {
+      "dataset_index": 3672,
+      "iou": 0.767617
+    },
+    {
+      "dataset_index": 1072,
+      "iou": 0.910399
+    },
+    {
+      "dataset_index": 3157,
+      "iou": 0.565118
+    },
+    {
+      "dataset_index": 3340,
+      "iou": 0.726851
+    },
+    {
+      "dataset_index": 2352,
+      "iou": 0.518649
+    },
+    {
+      "dataset_index": 2844,
+      "iou": 0.87693
+    },
+    {
+      "dataset_index": 2010,
+      "iou": 0.831292
+    },
+    {
+      "dataset_index": 2197,
+      "iou": 0.812849
+    },
+    {
+      "dataset_index": 1862,
+      "iou": 0.667071
+    },
+    {
+      "dataset_index": 3022,
+      "iou": 0.7947
+    },
+    {
+      "dataset_index": 99,
+      "iou": 0.811661
+    },
+    {
+      "dataset_index": 940,
+      "iou": 0.925399
+    },
+    {
+      "dataset_index": 2180,
+      "iou": 0.614405
+    },
+    {
+      "dataset_index": 2908,
+      "iou": 0.685672
+    },
+    {
+      "dataset_index": 2359,
+      "iou": 0.783587
+    },
+    {
+      "dataset_index": 1010,
+      "iou": 0.862511
+    },
+    {
+      "dataset_index": 276,
+      "iou": 0.817892
+    },
+    {
+      "dataset_index": 879,
+      "iou": 0.897868
+    },
+    {
+      "dataset_index": 2423,
+      "iou": 0.831014
+    },
+    {
+      "dataset_index": 3277,
+      "iou": 0.863652
+    },
+    {
+      "dataset_index": 17,
+      "iou": 0.851704
+    },
+    {
+      "dataset_index": 1541,
+      "iou": 0.779165
+    },
+    {
+      "dataset_index": 484,
+      "iou": 0.853319
+    },
+    {
+      "dataset_index": 3127,
+      "iou": 0.767478
+    },
+    {
+      "dataset_index": 2508,
+      "iou": 0.89688
+    },
+    {
+      "dataset_index": 267,
+      "iou": 0.715556
+    },
+    {
+      "dataset_index": 387,
+      "iou": 0.866034
+    },
+    {
+      "dataset_index": 3246,
+      "iou": 0.718838
+    },
+    {
+      "dataset_index": 1071,
+      "iou": 0.71101
+    },
+    {
+      "dataset_index": 3242,
+      "iou": 0.866429
+    },
+    {
+      "dataset_index": 3566,
+      "iou": 0.687842
+    },
+    {
+      "dataset_index": 43,
+      "iou": 0.768675
+    },
+    {
+      "dataset_index": 1447,
+      "iou": 0.681268
+    },
+    {
+      "dataset_index": 1401,
+      "iou": 0.724612
+    },
+    {
+      "dataset_index": 1615,
+      "iou": 0.126713
+    },
+    {
+      "dataset_index": 792,
+      "iou": 0.921229
+    },
+    {
+      "dataset_index": 2189,
+      "iou": 0.717784
+    },
+    {
+      "dataset_index": 844,
+      "iou": 0.45345
+    },
+    {
+      "dataset_index": 7,
+      "iou": 0.766893
+    },
+    {
+      "dataset_index": 3210,
+      "iou": 0.862992
+    },
+    {
+      "dataset_index": 3350,
+      "iou": 0.683526
+    },
+    {
+      "dataset_index": 295,
+      "iou": 0.800679
+    },
+    {
+      "dataset_index": 1246,
+      "iou": 0.822473
+    },
+    {
+      "dataset_index": 1892,
+      "iou": 0.724876
+    },
+    {
+      "dataset_index": 2222,
+      "iou": 0.698787
+    },
+    {
+      "dataset_index": 2251,
+      "iou": 0.804906
+    },
+    {
+      "dataset_index": 2953,
+      "iou": 0.823161
+    },
+    {
+      "dataset_index": 2947,
+      "iou": 0.871783
+    },
+    {
+      "dataset_index": 2449,
+      "iou": 0.649109
+    },
+    {
+      "dataset_index": 3642,
+      "iou": 0.667309
+    },
+    {
+      "dataset_index": 3149,
+      "iou": 0.546841
+    },
+    {
+      "dataset_index": 2354,
+      "iou": 0.758417
+    },
+    {
+      "dataset_index": 1536,
+      "iou": 0.836137
+    },
+    {
+      "dataset_index": 150,
+      "iou": 0.869821
+    },
+    {
+      "dataset_index": 3449,
+      "iou": 0.825165
+    },
+    {
+      "dataset_index": 3308,
+      "iou": 0.832328
+    },
+    {
+      "dataset_index": 3326,
+      "iou": 0.686497
+    },
+    {
+      "dataset_index": 1173,
+      "iou": 0.67048
+    },
+    {
+      "dataset_index": 1975,
+      "iou": 0.766449
+    },
+    {
+      "dataset_index": 1629,
+      "iou": 0.8586
+    },
+    {
+      "dataset_index": 3147,
+      "iou": 0.630882
+    },
+    {
+      "dataset_index": 149,
+      "iou": 0.838553
+    },
+    {
+      "dataset_index": 3532,
+      "iou": 0.670781
+    },
+    {
+      "dataset_index": 2671,
+      "iou": 0.855381
+    },
+    {
+      "dataset_index": 419,
+      "iou": 0.572703
+    },
+    {
+      "dataset_index": 2303,
+      "iou": 0.659196
+    },
+    {
+      "dataset_index": 843,
+      "iou": 0.830225
+    },
+    {
+      "dataset_index": 601,
+      "iou": 0.821599
+    },
+    {
+      "dataset_index": 1410,
+      "iou": 0.782468
+    },
+    {
+      "dataset_index": 3610,
+      "iou": 0.795643
+    },
+    {
+      "dataset_index": 343,
+      "iou": 0.743481
+    },
+    {
+      "dataset_index": 787,
+      "iou": 0.916492
+    },
+    {
+      "dataset_index": 2562,
+      "iou": 0.299348
+    },
+    {
+      "dataset_index": 1883,
+      "iou": 0.724642
+    },
+    {
+      "dataset_index": 1372,
+      "iou": 0.884809
+    },
+    {
+      "dataset_index": 3518,
+      "iou": 0.799326
+    },
+    {
+      "dataset_index": 2392,
+      "iou": 0.753242
+    },
+    {
+      "dataset_index": 3492,
+      "iou": 0.777041
+    },
+    {
+      "dataset_index": 3267,
+      "iou": 0.844837
+    },
+    {
+      "dataset_index": 2375,
+      "iou": 0.904632
+    },
+    {
+      "dataset_index": 13,
+      "iou": 0.573512
+    },
+    {
+      "dataset_index": 2610,
+      "iou": 0.849197
+    },
+    {
+      "dataset_index": 2102,
+      "iou": 0.8816
+    },
+    {
+      "dataset_index": 2408,
+      "iou": 0.801716
+    },
+    {
+      "dataset_index": 2323,
+      "iou": 0.607364
+    },
+    {
+      "dataset_index": 350,
+      "iou": 0.908674
+    },
+    {
+      "dataset_index": 188,
+      "iou": 0.902277
+    },
+    {
+      "dataset_index": 3472,
+      "iou": 0.737273
+    },
+    {
+      "dataset_index": 2832,
+      "iou": 0.883995
+    },
+    {
+      "dataset_index": 2293,
+      "iou": 0.854519
+    },
+    {
+      "dataset_index": 1904,
+      "iou": 0.842335
+    },
+    {
+      "dataset_index": 1116,
+      "iou": 0.859079
+    },
+    {
+      "dataset_index": 1474,
+      "iou": 0.830514
+    },
+    {
+      "dataset_index": 1374,
+      "iou": 0.779583
+    },
+    {
+      "dataset_index": 1573,
+      "iou": 0.729909
+    },
+    {
+      "dataset_index": 1017,
+      "iou": 0.691894
+    },
+    {
+      "dataset_index": 3105,
+      "iou": 0.760089
+    },
+    {
+      "dataset_index": 2372,
+      "iou": 0.598637
+    },
+    {
+      "dataset_index": 169,
+      "iou": 0.738541
+    },
+    {
+      "dataset_index": 2059,
+      "iou": 0.785641
+    },
+    {
+      "dataset_index": 2878,
+      "iou": 0.798021
+    },
+    {
+      "dataset_index": 2709,
+      "iou": 0.72756
+    },
+    {
+      "dataset_index": 980,
+      "iou": 0.760069
+    },
+    {
+      "dataset_index": 3431,
+      "iou": 0.803412
+    },
+    {
+      "dataset_index": 1237,
+      "iou": 0.794222
+    },
+    {
+      "dataset_index": 2466,
+      "iou": 0.729432
+    },
+    {
+      "dataset_index": 957,
+      "iou": 0.814369
+    },
+    {
+      "dataset_index": 1316,
+      "iou": 0.870605
+    },
+    {
+      "dataset_index": 3063,
+      "iou": 0.860484
+    },
+    {
+      "dataset_index": 1171,
+      "iou": 0.905279
+    },
+    {
+      "dataset_index": 1665,
+      "iou": 0.810394
+    },
+    {
+      "dataset_index": 2073,
+      "iou": 0.780986
+    },
+    {
+      "dataset_index": 2833,
+      "iou": 0.824166
+    },
+    {
+      "dataset_index": 2725,
+      "iou": 0.322476
+    },
+    {
+      "dataset_index": 2247,
+      "iou": 0.674388
+    },
+    {
+      "dataset_index": 3500,
+      "iou": 0.86353
+    },
+    {
+      "dataset_index": 2325,
+      "iou": 0.797067
+    },
+    {
+      "dataset_index": 1597,
+      "iou": 0.824973
+    },
+    {
+      "dataset_index": 1802,
+      "iou": 0.744588
+    },
+    {
+      "dataset_index": 2281,
+      "iou": 0.690916
+    },
+    {
+      "dataset_index": 3675,
+      "iou": 0.727337
+    },
+    {
+      "dataset_index": 1854,
+      "iou": 0.643221
+    },
+    {
+      "dataset_index": 70,
+      "iou": 0.683228
+    },
+    {
+      "dataset_index": 1108,
+      "iou": 0.8374
+    },
+    {
+      "dataset_index": 568,
+      "iou": 0.761833
+    },
+    {
+      "dataset_index": 238,
+      "iou": 0.567197
+    },
+    {
+      "dataset_index": 2608,
+      "iou": 0.784129
+    },
+    {
+      "dataset_index": 3053,
+      "iou": 0.438786
+    },
+    {
+      "dataset_index": 1413,
+      "iou": 0.831588
+    },
+    {
+      "dataset_index": 2594,
+      "iou": 0.816816
+    },
+    {
+      "dataset_index": 1203,
+      "iou": 0.657847
+    },
+    {
+      "dataset_index": 3435,
+      "iou": 0.776183
+    },
+    {
+      "dataset_index": 495,
+      "iou": 0.706762
+    },
+    {
+      "dataset_index": 2770,
+      "iou": 0.84002
+    },
+    {
+      "dataset_index": 2121,
+      "iou": 0.808433
+    },
+    {
+      "dataset_index": 2972,
+      "iou": 0.846564
+    },
+    {
+      "dataset_index": 1901,
+      "iou": 0.711007
+    },
+    {
+      "dataset_index": 3563,
+      "iou": 0.329494
+    },
+    {
+      "dataset_index": 2681,
+      "iou": 0.795509
+    },
+    {
+      "dataset_index": 134,
+      "iou": 0.647205
+    },
+    {
+      "dataset_index": 3100,
+      "iou": 0.824255
+    },
+    {
+      "dataset_index": 591,
+      "iou": 0.841208
+    },
+    {
+      "dataset_index": 59,
+      "iou": 0.790926
+    },
+    {
+      "dataset_index": 2124,
+      "iou": 0.866043
+    },
+    {
+      "dataset_index": 909,
+      "iou": 0.901774
+    },
+    {
+      "dataset_index": 1782,
+      "iou": 0.734526
+    },
+    {
+      "dataset_index": 3606,
+      "iou": 0.83157
+    },
+    {
+      "dataset_index": 1786,
+      "iou": 0.938442
+    },
+    {
+      "dataset_index": 2768,
+      "iou": 0.846202
+    },
+    {
+      "dataset_index": 1885,
+      "iou": 0.788671
+    },
+    {
+      "dataset_index": 2901,
+      "iou": 0.846092
+    },
+    {
+      "dataset_index": 3375,
+      "iou": 0.686692
+    },
+    {
+      "dataset_index": 1747,
+      "iou": 0.788627
+    },
+    {
+      "dataset_index": 453,
+      "iou": 0.854301
+    },
+    {
+      "dataset_index": 820,
+      "iou": 0.884073
+    },
+    {
+      "dataset_index": 1589,
+      "iou": 0.754833
+    },
+    {
+      "dataset_index": 741,
+      "iou": 0.740395
+    },
+    {
+      "dataset_index": 3116,
+      "iou": 0.674078
+    },
+    {
+      "dataset_index": 1289,
+      "iou": 0.595019
+    },
+    {
+      "dataset_index": 1466,
+      "iou": 0.725621
+    },
+    {
+      "dataset_index": 3048,
+      "iou": 0.805513
+    },
+    {
+      "dataset_index": 3049,
+      "iou": 0.610513
+    },
+    {
+      "dataset_index": 2817,
+      "iou": 0.743552
+    },
+    {
+      "dataset_index": 3138,
+      "iou": 0.871726
+    },
+    {
+      "dataset_index": 545,
+      "iou": 0.714399
+    },
+    {
+      "dataset_index": 3523,
+      "iou": 0.320945
+    },
+    {
+      "dataset_index": 3389,
+      "iou": 0.84484
+    },
+    {
+      "dataset_index": 1141,
+      "iou": 0.694679
+    },
+    {
+      "dataset_index": 1492,
+      "iou": 0.872777
+    },
+    {
+      "dataset_index": 3150,
+      "iou": 0.758027
+    },
+    {
+      "dataset_index": 517,
+      "iou": 0.840415
+    },
+    {
+      "dataset_index": 2915,
+      "iou": 0.835405
+    },
+    {
+      "dataset_index": 1585,
+      "iou": 0.855242
+    },
+    {
+      "dataset_index": 107,
+      "iou": 0.648001
+    },
+    {
+      "dataset_index": 2226,
+      "iou": 0.63748
+    },
+    {
+      "dataset_index": 2990,
+      "iou": 0.756417
+    },
+    {
+      "dataset_index": 815,
+      "iou": 0.821723
+    },
+    {
+      "dataset_index": 3584,
+      "iou": 0.767818
+    },
+    {
+      "dataset_index": 1640,
+      "iou": 0.911366
+    },
+    {
+      "dataset_index": 177,
+      "iou": 0.89059
+    },
+    {
+      "dataset_index": 642,
+      "iou": 0.814491
+    },
+    {
+      "dataset_index": 3202,
+      "iou": 0.845485
+    },
+    {
+      "dataset_index": 1913,
+      "iou": 0.711992
+    },
+    {
+      "dataset_index": 1312,
+      "iou": 0.836261
+    },
+    {
+      "dataset_index": 2686,
+      "iou": 0.849155
+    },
+    {
+      "dataset_index": 112,
+      "iou": 0.705058
+    },
+    {
+      "dataset_index": 2355,
+      "iou": 0.778721
+    },
+    {
+      "dataset_index": 3266,
+      "iou": 0.8574
+    },
+    {
+      "dataset_index": 3573,
+      "iou": 0.82187
+    },
+    {
+      "dataset_index": 1651,
+      "iou": 0.817094
+    },
+    {
+      "dataset_index": 939,
+      "iou": 0.783052
+    },
+    {
+      "dataset_index": 2761,
+      "iou": 0.758649
+    },
+    {
+      "dataset_index": 1599,
+      "iou": 0.777175
+    },
+    {
+      "dataset_index": 3008,
+      "iou": 0.81976
+    },
+    {
+      "dataset_index": 1351,
+      "iou": 0.787392
+    },
+    {
+      "dataset_index": 3020,
+      "iou": 0.158382
+    },
+    {
+      "dataset_index": 1751,
+      "iou": 0.775842
+    },
+    {
+      "dataset_index": 2907,
+      "iou": 0.808319
+    },
+    {
+      "dataset_index": 1685,
+      "iou": 0.882031
+    },
+    {
+      "dataset_index": 457,
+      "iou": 0.619433
+    },
+    {
+      "dataset_index": 621,
+      "iou": 0.676894
+    },
+    {
+      "dataset_index": 810,
+      "iou": 0.854686
+    },
+    {
+      "dataset_index": 3415,
+      "iou": 0.86524
+    },
+    {
+      "dataset_index": 1019,
+      "iou": 0.858478
+    },
+    {
+      "dataset_index": 764,
+      "iou": 0.719996
+    },
+    {
+      "dataset_index": 3288,
+      "iou": 0.639474
+    },
+    {
+      "dataset_index": 2167,
+      "iou": 0.486005
+    },
+    {
+      "dataset_index": 3593,
+      "iou": 0.871535
+    },
+    {
+      "dataset_index": 2876,
+      "iou": 0.639294
+    },
+    {
+      "dataset_index": 50,
+      "iou": 0.615196
+    },
+    {
+      "dataset_index": 412,
+      "iou": 0.848177
+    },
+    {
+      "dataset_index": 2631,
+      "iou": 0.774355
+    },
+    {
+      "dataset_index": 236,
+      "iou": 0.898381
+    },
+    {
+      "dataset_index": 282,
+      "iou": 0.646961
+    },
+    {
+      "dataset_index": 2582,
+      "iou": 0.748616
+    },
+    {
+      "dataset_index": 1358,
+      "iou": 0.717432
+    },
+    {
+      "dataset_index": 2536,
+      "iou": 0.716814
+    },
+    {
+      "dataset_index": 1025,
+      "iou": 0.950867
+    },
+    {
+      "dataset_index": 3360,
+      "iou": 0.221752
+    },
+    {
+      "dataset_index": 560,
+      "iou": 0.645816
+    },
+    {
+      "dataset_index": 1669,
+      "iou": 0.324912
+    },
+    {
+      "dataset_index": 1831,
+      "iou": 0.835921
+    },
+    {
+      "dataset_index": 3504,
+      "iou": 0.027156
+    },
+    {
+      "dataset_index": 1197,
+      "iou": 0.773471
+    },
+    {
+      "dataset_index": 1533,
+      "iou": 0.781885
+    },
+    {
+      "dataset_index": 2794,
+      "iou": 0.864216
+    },
+    {
+      "dataset_index": 2890,
+      "iou": 0.769136
+    },
+    {
+      "dataset_index": 2842,
+      "iou": 0.700261
+    },
+    {
+      "dataset_index": 2864,
+      "iou": 0.770344
+    },
+    {
+      "dataset_index": 691,
+      "iou": 0.962208
+    },
+    {
+      "dataset_index": 1088,
+      "iou": 0.813681
+    },
+    {
+      "dataset_index": 300,
+      "iou": 0.881673
+    },
+    {
+      "dataset_index": 78,
+      "iou": 0.851246
+    },
+    {
+      "dataset_index": 3371,
+      "iou": 0.708363
+    },
+    {
+      "dataset_index": 1537,
+      "iou": 0.168853
+    },
+    {
+      "dataset_index": 1679,
+      "iou": 0.465905
+    },
+    {
+      "dataset_index": 3476,
+      "iou": 0.3623
+    },
+    {
+      "dataset_index": 1905,
+      "iou": 0.828485
+    },
+    {
+      "dataset_index": 356,
+      "iou": 0.891236
+    },
+    {
+      "dataset_index": 969,
+      "iou": 0.669652
+    },
+    {
+      "dataset_index": 689,
+      "iou": 0.885518
+    },
+    {
+      "dataset_index": 1780,
+      "iou": 0.772676
+    },
+    {
+      "dataset_index": 2042,
+      "iou": 0.645072
+    },
+    {
+      "dataset_index": 2955,
+      "iou": 0.939239
+    },
+    {
+      "dataset_index": 2135,
+      "iou": 0.656605
+    },
+    {
+      "dataset_index": 3312,
+      "iou": 0.759666
+    },
+    {
+      "dataset_index": 1394,
+      "iou": 0.57824
+    },
+    {
+      "dataset_index": 725,
+      "iou": 0.836984
+    },
+    {
+      "dataset_index": 1622,
+      "iou": 0.746049
+    },
+    {
+      "dataset_index": 3297,
+      "iou": 0.90152
+    },
+    {
+      "dataset_index": 1794,
+      "iou": 0.795996
+    },
+    {
+      "dataset_index": 757,
+      "iou": 0.570772
+    },
+    {
+      "dataset_index": 2187,
+      "iou": 0.720183
+    },
+    {
+      "dataset_index": 91,
+      "iou": 0.519752
+    },
+    {
+      "dataset_index": 2847,
+      "iou": 0.913105
+    },
+    {
+      "dataset_index": 1929,
+      "iou": 0.752054
+    },
+    {
+      "dataset_index": 1759,
+      "iou": 0.598848
+    },
+    {
+      "dataset_index": 1863,
+      "iou": 0.742043
+    },
+    {
+      "dataset_index": 1369,
+      "iou": 0.968337
+    },
+    {
+      "dataset_index": 1836,
+      "iou": 0.589469
+    },
+    {
+      "dataset_index": 1238,
+      "iou": 0.914691
+    },
+    {
+      "dataset_index": 2260,
+      "iou": 0.622166
+    },
+    {
+      "dataset_index": 1327,
+      "iou": 0.76371
+    },
+    {
+      "dataset_index": 1259,
+      "iou": 0.858224
+    },
+    {
+      "dataset_index": 1549,
+      "iou": 0.569202
+    },
+    {
+      "dataset_index": 2349,
+      "iou": 0.742188
+    },
+    {
+      "dataset_index": 175,
+      "iou": 0.578619
+    },
+    {
+      "dataset_index": 3663,
+      "iou": 0.840919
+    },
+    {
+      "dataset_index": 3080,
+      "iou": 0.908263
+    },
+    {
+      "dataset_index": 1995,
+      "iou": 0.784735
+    },
+    {
+      "dataset_index": 1352,
+      "iou": 0.860225
+    },
+    {
+      "dataset_index": 709,
+      "iou": 0.676218
+    },
+    {
+      "dataset_index": 1278,
+      "iou": 0.81506
+    },
+    {
+      "dataset_index": 2067,
+      "iou": 0.707753
+    },
+    {
+      "dataset_index": 2721,
+      "iou": 0.733384
+    },
+    {
+      "dataset_index": 793,
+      "iou": 0.660322
+    },
+    {
+      "dataset_index": 1522,
+      "iou": 0.828311
+    },
+    {
+      "dataset_index": 2254,
+      "iou": 0.676532
+    },
+    {
+      "dataset_index": 581,
+      "iou": 0.736692
+    },
+    {
+      "dataset_index": 2110,
+      "iou": 0.591815
+    },
+    {
+      "dataset_index": 2427,
+      "iou": 0.797954
+    },
+    {
+      "dataset_index": 38,
+      "iou": 0.862041
+    },
+    {
+      "dataset_index": 813,
+      "iou": 0.772096
+    },
+    {
+      "dataset_index": 1922,
+      "iou": 0.822407
+    },
+    {
+      "dataset_index": 1770,
+      "iou": 0.782812
+    },
+    {
+      "dataset_index": 2521,
+      "iou": 0.800443
+    },
+    {
+      "dataset_index": 2425,
+      "iou": 0.469151
+    },
+    {
+      "dataset_index": 2639,
+      "iou": 0.759857
+    },
+    {
+      "dataset_index": 126,
+      "iou": 0.716799
+    },
+    {
+      "dataset_index": 1875,
+      "iou": 0.833275
+    },
+    {
+      "dataset_index": 962,
+      "iou": 0.893907
+    },
+    {
+      "dataset_index": 868,
+      "iou": 0.691478
+    },
+    {
+      "dataset_index": 608,
+      "iou": 0.682296
+    },
+    {
+      "dataset_index": 447,
+      "iou": 0.646788
+    },
+    {
+      "dataset_index": 920,
+      "iou": 0.858773
+    },
+    {
+      "dataset_index": 3170,
+      "iou": 0.579005
+    },
+    {
+      "dataset_index": 705,
+      "iou": 0.738984
+    },
+    {
+      "dataset_index": 875,
+      "iou": 0.746546
+    },
+    {
+      "dataset_index": 2609,
+      "iou": 0.857414
+    },
+    {
+      "dataset_index": 1324,
+      "iou": 0.890652
+    },
+    {
+      "dataset_index": 3007,
+      "iou": 0.749667
+    },
+    {
+      "dataset_index": 2474,
+      "iou": 0.520357
+    },
+    {
+      "dataset_index": 2202,
+      "iou": 0.75825
+    },
+    {
+      "dataset_index": 2030,
+      "iou": 0.786869
+    },
+    {
+      "dataset_index": 1847,
+      "iou": 0.893651
+    },
+    {
+      "dataset_index": 1138,
+      "iou": 0.690114
+    },
+    {
+      "dataset_index": 2931,
+      "iou": 0.832926
+    }
+  ],
+  "visuals": {
+    "iou_distribution": "iou_distribution.png",
+    "prediction_visualization": "prediction_visualization.png"
+  }
+}

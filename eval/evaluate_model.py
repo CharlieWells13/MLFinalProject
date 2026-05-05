@@ -16,7 +16,7 @@ THIS_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = THIS_DIR.parent
 DEFAULT_GT_PATH = PROJECT_ROOT / "preprocessed_data" / "bboxes.npy"
 DEFAULT_IMAGES_NPY = PROJECT_ROOT / "preprocessed_data" / "images.npy"
-DEFAULT_OUTPUT_DIR = THIS_DIR / "model_eval_database"
+DEFAULT_OUTPUT_DIR = THIS_DIR / "results"
 
 IOU_THRESHOLDS = [0.25, 0.50, 0.75, 0.90]
 
@@ -174,6 +174,62 @@ def generate_sample_bbox_plot(
     return True
 
 
+def generate_random_bbox_grid_plot(
+    per_image: list[dict],
+    predictions: dict[int, tuple],
+    ground_truth: dict[int, tuple],
+    images_npy: Path,
+    output_path: Path,
+    n_samples: int = 10,
+    seed: int = 42,
+) -> bool:
+    if not per_image:
+        return False
+
+    rng = np.random.default_rng(seed)
+    sample_count = min(n_samples, len(per_image))
+    selected = rng.choice(per_image, size=sample_count, replace=False).tolist()
+
+    ncols = 5
+    nrows = int(np.ceil(sample_count / ncols))
+    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(4 * ncols, 4 * nrows))
+    axes_arr = np.array(axes, dtype=object).reshape(-1)
+
+    rendered = 0
+    for i, sample in enumerate(selected):
+        ax = axes_arr[i]
+        idx = sample["dataset_index"]
+        img = _load_image_from_npy(images_npy, idx)
+        if img is None:
+            ax.axis("off")
+            continue
+
+        pred = predictions[idx]
+        gt = ground_truth[idx]
+
+        ax.imshow(img)
+        gx, gy, gw, gh = gt
+        ax.add_patch(patches.Rectangle((gx, gy), gw, gh, linewidth=2, edgecolor="red", facecolor="none"))
+        px, py, pw, ph = pred
+        ax.add_patch(patches.Rectangle((px, py), pw, ph, linewidth=2, edgecolor="green", facecolor="none"))
+        ax.set_title(f"idx {idx} | IoU {sample['iou']:.3f}", fontsize=9)
+        ax.axis("off")
+        rendered += 1
+
+    for j in range(sample_count, len(axes_arr)):
+        axes_arr[j].axis("off")
+
+    if rendered == 0:
+        plt.close(fig)
+        return False
+
+    fig.suptitle(f"Random prediction samples (n={rendered})", fontsize=12)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=120, bbox_inches="tight")
+    plt.close(fig)
+    return True
+
+
 def generate_iou_distribution_plot(
     test_per_image: list[dict],
     output_path: Path,
@@ -212,7 +268,7 @@ def generate_visuals(
     train_metrics: dict | None = None,
     train_predictions: dict | None = None,
 ) -> dict:
-    """Generate all plots, return dict of relative paths (relative to parent of visuals_dir)."""
+    """Generate all plots, return dict of relative paths (relative to visuals_dir)."""
     visuals_dir.mkdir(parents=True, exist_ok=True)
     saved = {}
 
@@ -223,14 +279,21 @@ def generate_visuals(
         dist_path,
         train_per_image=train_metrics["per_image"] if train_metrics else None,
     )
-    saved["iou_distribution"] = str(dist_path.relative_to(visuals_dir.parent))
+    saved["iou_distribution"] = str(dist_path.relative_to(visuals_dir))
 
-    # Sample bbox — test
-    test_sample = _select_median_sample(test_metrics["per_image"])
-    test_bbox_path = visuals_dir / "sample_bbox_test.png"
-    ok = generate_sample_bbox_plot(test_sample, test_predictions, ground_truth, images_npy, test_bbox_path, "Test")
+    # Random bbox grid — test
+    random_grid_path = visuals_dir / "prediction_visualization.png"
+    ok = generate_random_bbox_grid_plot(
+        per_image=test_metrics["per_image"],
+        predictions=test_predictions,
+        ground_truth=ground_truth,
+        images_npy=images_npy,
+        output_path=random_grid_path,
+        n_samples=10,
+        seed=42,
+    )
     if ok:
-        saved["sample_bbox_test"] = str(test_bbox_path.relative_to(visuals_dir.parent))
+        saved["prediction_visualization"] = str(random_grid_path.relative_to(visuals_dir))
 
     # Sample bbox — train
     if train_metrics and train_predictions:
@@ -238,9 +301,36 @@ def generate_visuals(
         train_bbox_path = visuals_dir / "sample_bbox_train.png"
         ok = generate_sample_bbox_plot(train_sample, train_predictions, ground_truth, images_npy, train_bbox_path, "Train")
         if ok:
-            saved["sample_bbox_train"] = str(train_bbox_path.relative_to(visuals_dir.parent))
+            saved["sample_bbox_train"] = str(train_bbox_path.relative_to(visuals_dir))
 
     return saved
+
+
+def build_report_dir(output_dir: Path, test_predictions_path: Path) -> Path:
+    """Create a deterministic output folder: <prediction_parent>_<prediction_stem>."""
+    folder_name = f"{test_predictions_path.parent.name}_{test_predictions_path.stem}"
+    run_dir = output_dir / folder_name
+    run_dir.mkdir(parents=True, exist_ok=True)
+    return run_dir
+
+
+def resolve_output_dir(user_output_dir: str | None) -> Path:
+    """
+    Always save reports under eval/results.
+    If a legacy model_eval_database path is passed, map it to eval/results.
+    """
+    if not user_output_dir:
+        return DEFAULT_OUTPUT_DIR
+
+    requested = Path(user_output_dir)
+    if requested.name == "model_eval_database":
+        return THIS_DIR / "results"
+    if "model_eval_database" in requested.parts:
+        parts = list(requested.parts)
+        idx = parts.index("model_eval_database")
+        remapped = Path(*parts[:idx], "results", *parts[idx + 1 :])
+        return remapped
+    return requested
 
 
 # ---------------------------------------------------------------------------
@@ -274,14 +364,13 @@ def _metrics_row(label: str, m: dict | None) -> str:
 def save_report(
     test_metrics: dict,
     metadata: dict,
-    output_dir: Path,
+    report_dir: Path,
     train_metrics: dict | None = None,
     visuals: dict | None = None,
 ) -> Path:
-    output_dir.mkdir(parents=True, exist_ok=True)
-    model = metadata.get("model", "unknown")
+    report_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    report_path = output_dir / f"{timestamp}_{model}.json"
+    report_path = report_dir / "report.json"
 
     report = {
         "report_timestamp": timestamp,
@@ -332,14 +421,14 @@ def update_reports_index(output_dir: Path) -> None:
 
             if vis.get("iou_distribution"):
                 lines.append(f"\n![IoU Distribution]({vis['iou_distribution']})\n")
-            if vis.get("sample_bbox_train") and vis.get("sample_bbox_test"):
+            if vis.get("sample_bbox_train") and vis.get("prediction_visualization"):
                 lines.append(
                     f"\n| Train sample | Test sample |\n"
                     f"|---|---|\n"
-                    f"| ![Train]({vis['sample_bbox_train']}) | ![Test]({vis['sample_bbox_test']}) |\n"
+                    f"| ![Train]({vis['sample_bbox_train']}) | ![Test]({vis['prediction_visualization']}) |\n"
                 )
-            elif vis.get("sample_bbox_test"):
-                lines.append(f"\n![Sample Prediction]({vis['sample_bbox_test']})\n")
+            elif vis.get("prediction_visualization"):
+                lines.append(f"\n![Prediction Visualization]({vis['prediction_visualization']})\n")
 
         except Exception:
             continue
@@ -371,14 +460,17 @@ def main() -> None:
     parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR), help="Directory to save report files.")
     args = parser.parse_args()
 
-    output_dir = Path(args.output_dir)
+    output_dir = resolve_output_dir(args.output_dir)
     images_npy = Path(args.images_npy)
+    test_predictions_path = Path(args.test_predictions)
+    report_dir = build_report_dir(output_dir, test_predictions_path)
 
     print(f"Ground truth: {args.ground_truth}")
     ground_truth = load_ground_truth(Path(args.ground_truth))
 
     print(f"Test predictions: {args.test_predictions}")
-    test_preds, metadata = parse_predictions_xml(Path(args.test_predictions))
+    print(f"Report directory: {report_dir}")
+    test_preds, metadata = parse_predictions_xml(test_predictions_path)
     test_metrics = compute_metrics(test_preds, ground_truth)
 
     train_preds, train_metrics = None, None
@@ -387,10 +479,9 @@ def main() -> None:
         train_preds, _ = parse_predictions_xml(Path(args.train_predictions))
         train_metrics = compute_metrics(train_preds, ground_truth)
 
-    # Visuals — use a subdirectory named after the report
+    # Visuals — save directly in the per-prediction report directory.
     model = metadata.get("model", "unknown")
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    visuals_dir = output_dir / f"{timestamp}_{model}"
+    visuals_dir = report_dir
 
     print("Generating visualizations...")
     visuals = generate_visuals(
@@ -402,14 +493,14 @@ def main() -> None:
         train_metrics=train_metrics,
         train_predictions=train_preds,
     )
-    if not visuals.get("sample_bbox_test"):
+    if not visuals.get("prediction_visualization"):
         print(f"  Note: images.npy not found ({images_npy}), skipping bbox visualization.")
 
-    report_path = save_report(test_metrics, metadata, output_dir, train_metrics, visuals)
+    report_path = save_report(test_metrics, metadata, report_dir, train_metrics, visuals)
     print(f"Report saved: {report_path}")
 
-    update_reports_index(output_dir)
-    print(f"Index updated: {output_dir / 'reports_index.md'}")
+    update_reports_index(report_dir)
+    print(f"Index updated: {report_dir / 'reports_index.md'}")
 
     print(f"\n=== {model} ===")
     if train_metrics:

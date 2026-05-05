@@ -1,7 +1,7 @@
 # ML Final Project: Object Localization Pipeline
 
-This repository contains our CSCI final project for **Option 2: End-to-End ML Pipeline for Object Localization**.  
-The goal is to predict object bounding boxes from pet images.
+End-to-end object localization project (CSCI 4750) on Oxford-IIIT Pet images.  
+The task is to predict one bounding box per image and compare deep learning vs traditional ML.
 
 ## Team
 
@@ -9,59 +9,89 @@ The goal is to predict object bounding boxes from pet images.
 - Gihwan (Finn) Jung
 - Aleksandre Khvadagadze
 
-## Project Scope
+## Final Results (IoU)
 
-We are building and comparing:
-- a **deep learning** bounding-box regression pipeline
-- a **traditional ML** baseline pipeline
+| Model | Split | Mean IoU | Median IoU |
+|---|---|---:|---:|
+| ResNet-18 regressor | Train | 0.793 | 0.821 |
+| ResNet-18 regressor | Test | 0.750 | 0.777 |
+| PCA + Random Forest | Train | 0.321 | 0.240 |
+| PCA + Random Forest | Test | 0.354 | 0.357 |
 
-The current implemented code in this repo is focused on the deep learning component, with docs organized so each teammate can fill their assigned section.
+Detailed evaluation artifacts are under `eval/results/`.
 
-## Repository Structure
+## Repository Layout
 
+- `data_preprocessing/`: dataset preprocessing notebooks/scripts
+- `preprocessed_data/`: generated arrays and split indices (created by preprocessing)
+- `deep_learning/`: ResNet models, training pipeline, prediction export
+- `machine_learning/`: PCA + Random Forest baseline
+- `eval/`: unified IoU evaluator, XML predictions, result reports/plots
+- `docs/`: flowchart, architecture diagram, deliverables, final report
 
+## Pipeline Overview
 
-## Deep Learning Implementation
+1. Preprocess images + XML annotations into fixed tensors/arrays.
+2. Train deep learning model (`ResNet-18`) and traditional baseline (`PCA + Random Forest`).
+3. Export predictions for each split to a shared XML format.
+4. Evaluate with a unified IoU pipeline (stats + visual diagnostics).
 
-- ResNet-18 backbone adapted for bounding box regression
-- Output target: 4 normalized values  
-  `(x_center, y_center, width, height)`
-- Config-driven training and hyperparameter control
+Flowchart: `docs/ML_Final_Flowchart.jpg`  
+ResNet architecture: `docs/resnet_18_architecture.png`
 
-Training configuration is handled through YAML files.
-
-## Data Flow (Deep Learning)
-
-1. Read split files (`trainval.txt`, `test.txt`)
-2. Parse XML annotations from `data\annotations\xmls\*.xml`
-3. Convert boxes from `(xmin, ymin, xmax, ymax)` to normalized `(x_center, y_center, width, height)`
-4. Load/resize images from `data\images\*.jpg`
-5. Train model and save best checkpoint by validation loss
-
-## How to Run
-
-From repo root:
-
-```powershell
-python deep_learning\train\<framework>\train.py
-```
-
-Optional custom config:
+## Setup
 
 ```powershell
-python deep_learning\train\<framework>\train.py --config deep_learning\train\<framework>\config.yaml
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 ```
 
-## Main Dependencies
+## Run Instructions
 
-- Python 3.10+
-- A deep learning framework (PyTorch or TensorFlow/Keras)
-- PyYAML
-- Pillow
-- NumPy
+Run all commands from repo root.
+
+1. Preprocess dataset (notebook-driven):
+
+```powershell
+jupyter notebook data_preprocessing\preprocess_dataset.ipynb
+```
+
+2. Train deep learning model with one config:
+
+```powershell
+python deep_learning\train\train.py --config deep_learning\train\configs\E20_B16_LR0001.yaml
+```
+
+3. Run deep learning grid search (all configs):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File deep_learning\train\run_grid_search.ps1
+```
+
+4. Run Random Forest baseline:
+
+```powershell
+python machine_learning\random_forest.py
+```
+
+5. Evaluate predictions:
+
+```powershell
+python eval\evaluate_model.py --help
+```
+
+## Key Artifacts
+
+- Best deep model checkpoint: `deep_learning/checkpoints/best/best.pt`
+- Deep model predictions: `eval/predictions/resnet_18/`
+- Random Forest predictions: `eval/predictions/random_forest/`
+- Evaluation reports: `eval/results/resnet_18_test/report.json`, `eval/results/random_forest_test/report.json`
+- Final report: `docs/final_report.md`
 
 ## Documentation
 
-- `deep_learning\README.md`: deep learning architecture and training overview
-- `docs\deliverable_1.md`: Deliverable I outline
-- `docs\deliverable_2.md`: Deliverable II write-up (sectioned by teammate contribution)
+- `deep_learning/README.md`
+- `docs/deliverable_1.md`
+- `docs/deliverable_2.md`
+- `docs/final_report.md`

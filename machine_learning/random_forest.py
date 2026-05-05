@@ -8,6 +8,7 @@ from pathlib import Path
 
 import joblib
 import numpy as np
+from skimage.feature import hog
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -15,6 +16,21 @@ ML_DIR = ROOT / "machine_learning"
 PREPROCESSED_DIR = ROOT / "preprocessed_data"
 PREDICTIONS_DIR = ML_DIR / "predictions"
 DEFAULT_MODEL_PATH = ML_DIR / "models" / "random_forest_pipeline.joblib"
+
+
+def extract_hog(images: np.ndarray) -> np.ndarray:
+    return np.array(
+        [
+            hog(
+                img,
+                orientations=8,
+                pixels_per_cell=(16, 16),
+                cells_per_block=(2, 2),
+                channel_axis=-1,
+            )
+            for img in images
+        ]
+    )
 
 
 def export_predictions_xml(
@@ -84,7 +100,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--output-dir",
-        default=str(PREDICTIONS_DIR),
+        default=str(ROOT / "eval" / "predictions" / "random_forest"),
         help="Directory for XML predictions",
     )
     args = parser.parse_args()
@@ -97,9 +113,9 @@ def main() -> None:
     train_idx = np.load(Path(args.train_indices))
     test_idx = np.load(Path(args.test_indices))
 
-    x_flat = images.reshape(len(images), -1)
-    x_train = x_flat[train_idx]
-    x_test = x_flat[test_idx]
+    print("Extracting HOG features...")
+    x_train = extract_hog(images[train_idx])
+    x_test = extract_hog(images[test_idx])
 
     print(f"Images: {images.shape}")
     print(f"Train: {x_train.shape[0]} samples | Test: {x_test.shape[0]} samples")
@@ -113,12 +129,12 @@ def main() -> None:
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Best params are included for metadata compatibility with evaluation script.
+    # Notebook best params for metadata compatibility with evaluation script.
     best_params = {
-        "pca__n_components": 100,
+        "pca__n_components": 200,
         "rf__n_estimators": 200,
         "rf__max_depth": None,
-        "rf__min_samples_leaf": 2,
+        "rf__min_samples_leaf": 1,
     }
 
     export_predictions_xml(
@@ -127,7 +143,7 @@ def main() -> None:
         "test",
         "random_forest",
         best_params,
-        output_dir / "rf_predictions_test.xml",
+        output_dir / "test.xml",
     )
     export_predictions_xml(
         y_pred_train,
@@ -135,7 +151,7 @@ def main() -> None:
         "train",
         "random_forest",
         best_params,
-        output_dir / "rf_predictions_train.xml",
+        output_dir / "train.xml",
     )
 
 

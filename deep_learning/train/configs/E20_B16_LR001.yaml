@@ -1,0 +1,13 @@
+# grid search hyperparameters
+epochs: 20
+batch_size: 16
+lr: 0.001
+
+# file paths
+train_indices_path: preprocessed_data/train_indices.npy
+images_npy: preprocessed_data/images.npy
+bboxes_npy: preprocessed_data/bboxes.npy
+
+# save paths
+checkpoint_root: deep_learning/checkpoints
+checkpoint_run_name: E20_B16_LR001

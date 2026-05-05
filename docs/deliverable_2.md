@@ -44,6 +44,10 @@ Why this model fits:
 - residual blocks improve optimization stability
 - output format directly matches localization regression targets
 
+ResNet-18 architecture diagram:
+
+![ResNet-18 Architecture Diagram](resnet_18_architecture.png)
+
 
 ### Traditional ML Contribution
 
