@@ -41,6 +41,17 @@ Key processing decisions:
 
 This makes the training/prediction pipeline deterministic and fast (no repeated XML parsing during training).
 
+### Preprocessing decision explainations
+We conducted an experiment comparing the different types of ways to preprocess the data and see how that affected the outcome, see [`data_preprocessing/preprocessing_comparison.ipynb`](../data_preprocessing/preprocessing_comparison.ipynb).
+
+We considered a couple of options for preprocessing the images, but ultimately chose to scale the image data via [0,1] normalization to size 224x224 and use RGB format.
+
+We did this for a few reasons:
+1. There was no major difference in outcomes in our testing run between all the different preprocessing techniques, so we prioritized other things
+2. simplicity and reliability: resizing images to 224x224x3 is really easy to do, and we knew that errors that would enevitably rise would not be from this, as the process is so simple.
+3. 224x224 was a common image size from our research on the internet, and some quick calculations showed that it would be a reasonable size to train on
+
+
 ### 3. Data Visualization and EDA
 EDA and visualization are performed in preprocessing and model notebooks/scripts:
 - Visual checks of resized images and bounding boxes in preprocessing notebook.
