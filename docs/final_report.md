@@ -3,7 +3,7 @@
 **Authors:** Charlie Wells, Gihwan (Finn) Jung, Aleksandre Khvadagadze
 
 ## Abstract
-This project builds an end-to-end machine learning pipeline for object localization on pet images. The task is to predict bounding boxes for a single object in each image. We implemented and compared two approaches: (1) a deep learning ResNet-18 localization regressor and (2) a traditional machine learning baseline using PCA + Random Forest Regressor. The workflow includes data acquisition and preprocessing, exploratory analysis, model training, prediction export, and IoU-based evaluation. Final results show the deep learning model substantially outperforms the random forest baseline on held-out test data (test mean IoU 0.750 vs 0.354).
+This project builds an end-to-end machine learning pipeline for object localization on pet images. The task is to predict bounding boxes for a single object in each image. We implemented and compared two approaches: (1) a deep learning ResNet-18 localization regressor and (2) a traditional machine learning baseline using PCA + ExtraTreesRegressor. The workflow includes data acquisition and preprocessing, exploratory analysis, model training, prediction export, and IoU-based evaluation. Final results show the deep learning model substantially outperforms the tree-ensemble baseline on held-out test data (test mean IoU 0.750 vs 0.354).
 
 ## Introduction
 Object localization is a core computer vision problem with applications in robotics, autonomous systems, medical imaging, and intelligent content analysis. Unlike image classification, localization requires predicting precise spatial coordinates (bounding boxes), which introduces both representation and evaluation challenges.
@@ -89,7 +89,11 @@ Approach:
 - Optimizer: AdamW.
 - Early stopping, fold checkpointing (`fold_n.pt`), and best-overall checkpoint tracking (`best.pt`).
 
-#### Traditional ML: PCA + Random Forest Regressor
+ResNet-18 architecture used in this project:
+
+![ResNet-18 Architecture Diagram](resnet_18_architecture.png)
+
+#### Traditional ML: PCA + ExtraTreesRegressor
 Implemented in:
 - exploratory notebook: `machine_learning/random_forest.ipynb`
 - runnable prediction script: `machine_learning/random_forest.py`
@@ -97,7 +101,7 @@ Implemented in:
 Approach:
 - Flatten image vectors.
 - PCA dimensionality reduction.
-- Multi-output RandomForestRegressor predicts 4 box coordinates.
+- Multi-output ExtraTreesRegressor predicts 4 box coordinates.
 
 ### 6. Model Selection / Hyperparameter Tuning
 Both model families used cross-validation-aware model selection.
@@ -114,7 +118,7 @@ Deep learning selection (`deep_learning/train/train.py`):
   - Best fold/epoch/loss: fold 1, epoch 17, val loss 0.207068
   - CV mean best val loss: 0.212002
 
-Traditional ML (PCA + Random Forest) selection:
+Traditional ML (PCA + ExtraTrees) selection:
 - Hyperparameter search was performed with randomized search and cross-validation in the random forest workflow.
 - Search space:
   - `pca__n_components`: [100, 200, 300]
@@ -145,14 +149,14 @@ Evaluated on `preprocessed_data/bboxes.npy` using:
 |---|---:|---:|---:|---:|---:|---:|
 | Deep Learning (ResNet-18) | Train | 2580 | 0.793 | 0.821 | 97.6% | 74.0% |
 | Deep Learning (ResNet-18) | Test | 738 | 0.750 | 0.777 | 95.7% | 58.9% |
-| Random Forest (PCA+RF) | Train | 2580 | 0.321 | 0.240 | 19.4% | 11.2% |
-| Random Forest (PCA+RF) | Test | 738 | 0.354 | 0.357 | 22.6% | 1.5% |
+| Extra Trees (PCA+ET) | Train | 2580 | 0.321 | 0.240 | 19.4% | 11.2% |
+| Extra Trees (PCA+ET) | Test | 738 | 0.354 | 0.357 | 22.6% | 1.5% |
 
 ### 2. Discussion
 Key findings:
-- ResNet-18 strongly outperforms random forest on both train and test splits.
+- ResNet-18 strongly outperforms the Extra Trees baseline on both train and test splits.
 - Deep model generalization gap is modest (0.793 train mean IoU -> 0.750 test mean IoU).
-- Random forest remains substantially weaker than deep learning, with especially low high-IoU success on test (IoU>=0.75: 1.5%).
+- Extra Trees remains substantially weaker than deep learning, with especially low high-IoU success on test (IoU>=0.75: 1.5%).
 
 Interpretation:
 - Convolutional representations are better suited than flattened + PCA features for spatial localization.
@@ -166,9 +170,9 @@ Final model qualitative prediction visualization (10 random test samples):
 
 ![Final Model Prediction Visualization](../eval/results/resnet_18_test/prediction_visualization.png)
 
-Traditional ML (PCA + Random Forest) qualitative prediction visualization:
+Traditional ML (PCA + Extra Trees) qualitative prediction visualization:
 
-![Random Forest Prediction Visualization](../eval/results/random_forest_test/prediction_visualization.png)
+![Extra Trees Prediction Visualization](../eval/results/random_forest_test/prediction_visualization.png)
 
 ### 3. Additional Evaluation Artifacts
 Generated outputs are saved under:
@@ -181,7 +185,7 @@ Deep learning IoU distribution:
 
 Traditional ML IoU distribution:
 
-![Random Forest IoU Distribution](../eval/results/random_forest_test/iou_distribution.png)
+![Extra Trees IoU Distribution](../eval/results/random_forest_test/iou_distribution.png)
 
 ### 4. Future Work
 1. Add checkpoint averaging or ensembling across CV folds for deep learning inference.
@@ -194,9 +198,12 @@ Traditional ML IoU distribution:
 Team contributions were distributed across the full pipeline:
 - **Gihwan (Finn) Jung:** preprocessing pipeline design/implementation, evaluation tooling integration, end-to-end run orchestration, report/evidence integration.
 - **Charlie Wells:** deep learning architecture/training pipeline implementation (ResNet-based regressor, config-driven training, checkpointing), prediction/export workflow.
-- **Aleksandre Khvadagadze:** traditional ML baseline (PCA + Random Forest), hyperparameter tuning with randomized CV, baseline analysis and comparative discussion.
+- **Aleksandre Khvadagadze:** traditional ML baseline (PCA + Extra Trees), hyperparameter tuning with cross-validation, baseline analysis and comparative discussion.
 
 All members contributed to debugging, experiment iteration, and deliverable preparation.
+
+## Conclusion
+This project delivered a complete object-localization pipeline from annotation parsing through model evaluation. Under a shared preprocessing and IoU-based evaluation protocol, the deep learning ResNet-18 regressor outperformed the traditional PCA + Extra Trees baseline by a wide margin on held-out test data. The comparison highlights that convolutional feature learning is substantially more effective than handcrafted flattened-feature pipelines for precise spatial localization, while also reinforcing the importance of reproducible splits, consistent target formatting, and unified evaluation tooling in end-to-end ML projects.
 
 ## Course Summary
 This project consolidated core course concepts into a single applied pipeline:
@@ -210,6 +217,6 @@ The most important learning outcome was that model quality depends not only on a
 
 ## References
 1. He, K., Zhang, X., Ren, S., & Sun, J. (2016). Deep Residual Learning for Image Recognition. CVPR.
-2. Breiman, L. (2001). Random Forests. Machine Learning, 45(1), 5-32.
+2. Geurts, P., Ernst, D., & Wehenkel, L. (2006). Extremely randomized trees. Machine Learning, 63(1), 3-42.
 3. Pedregosa, F., et al. (2011). Scikit-learn: Machine Learning in Python. JMLR.
 4. Oxford-IIIT Pet Dataset (Parkhi et al., 2012), dataset used for pet image/annotation localization tasks.
