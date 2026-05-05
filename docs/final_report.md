@@ -89,6 +89,10 @@ Approach:
 - Optimizer: AdamW.
 - Early stopping, fold checkpointing (`fold_n.pt`), and best-overall checkpoint tracking (`best.pt`).
 
+ResNet-18 architecture used in this project:
+
+![ResNet-18 Architecture Diagram](resnet_18_architecture.png)
+
 #### Traditional ML: PCA + Random Forest Regressor
 Implemented in:
 - exploratory notebook: `machine_learning/random_forest.ipynb`
